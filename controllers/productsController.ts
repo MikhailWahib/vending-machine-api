@@ -3,6 +3,7 @@ import { db } from "../prisma/client"
 import { userExists } from "../utils"
 import { isSeller } from "../helpers/productsHelpers"
 import { acceptedValues } from "../constants"
+import { Result, validationResult } from "express-validator"
 
 export const handleGetAllProducts = async (req: Request, res: Response) => {
 	try {
@@ -18,18 +19,18 @@ export const handleGetAllProducts = async (req: Request, res: Response) => {
 export const handleCreateProduct = async (req: Request, res: Response) => {
 	try {
 		const { productName, amountAvailable, cost, sellerId } = req.body
-		const name = productName.toLowerCase()
 
-		// check if values are valid
-		if (!acceptedValues.includes(cost)) {
+		const result: Result = validationResult(req)
+
+		if (result.array().length > 0) {
 			return res.status(400).json({
-				message: "Invalid cost value",
+				errors: result.array(),
 			})
 		}
 
 		const productExists = await db.product.findUnique({
 			where: {
-				productName: name,
+				productName,
 			},
 		})
 
@@ -56,7 +57,7 @@ export const handleCreateProduct = async (req: Request, res: Response) => {
 
 		const product = await db.product.create({
 			data: {
-				productName: name,
+				productName,
 				amountAvailable,
 				cost,
 				sellerId,
@@ -73,9 +74,86 @@ export const handleCreateProduct = async (req: Request, res: Response) => {
 	}
 }
 
-export const handleDeleteProduct = async (req: Request, res: Response) => {
+export const handleUpdateProduct = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params
+		const { productName, amountAvailable, cost, sellerId } = req.body
+		// let name
+
+		// if (productName) {
+		// 	name = productName.toLowerCase()
+		// }
+
+		const result: Result = validationResult(req)
+
+		if (result.array().length > 0) {
+			return res.status(400).json({
+				errors: result.array(),
+			})
+		}
+
+		// check if product exists
+		const product = await db.product.findUnique({
+			where: {
+				id: parseInt(id),
+			},
+		})
+
+		if (!product) {
+			return res.status(404).json({
+				message: "Product not found",
+			})
+		}
+
+		// check if new product name already exists
+		if (productName) {
+			const newProductNameExists = await db.product.findUnique({
+				where: {
+					productName,
+				},
+			})
+
+			if (newProductNameExists) {
+				return res.status(400).json({
+					message: "Product name already exists",
+				})
+			}
+		}
+
+		const updatedProduct = await db.product.update({
+			where: {
+				id: parseInt(id),
+			},
+			data: {
+				productName,
+				amountAvailable,
+				cost,
+				sellerId,
+			},
+		})
+
+		return res.status(200).json({
+			message: "Product updated successfully",
+			updatedProduct,
+		})
+	} catch (e) {
+		console.log(`Error updating product: ${e}`)
+		return res.status(500).json({ message: "Failed to update product" })
+	}
+}
+
+export const handleDeleteProduct = async (req: Request, res: Response) => {
+	try {
+		// TODO: add authorization
+		const { id } = req.params
+
+		const result: Result = validationResult(req)
+
+		if (result.array().length > 0) {
+			return res.status(400).json({
+				errors: result.array(),
+			})
+		}
 
 		// check if product exists
 		const product = await db.product.findUnique({
@@ -96,79 +174,11 @@ export const handleDeleteProduct = async (req: Request, res: Response) => {
 			},
 		})
 
-		return res.status(202).json({
+		return res.status(200).json({
 			message: "Product deleted successfully",
 		})
 	} catch (e) {
-		console.log(`Error deleting product: ${e}`)
-		return res.status(500).json({ message: "Failed to delete product" })
-	}
-}
-
-export const handleUpdateProduct = async (req: Request, res: Response) => {
-	try {
-		const { id } = req.params
-		const { productName, amountAvailable, cost, sellerId } = req.body
-		let name
-
-		if (productName) {
-			name = productName.toLowerCase()
-		}
-
-		// check if values are valid
-		if (!acceptedValues.includes(cost)) {
-			return res.status(400).json({
-				message: "Invalid cost value",
-			})
-		}
-
-		// check if product exists
-		const product = await db.product.findUnique({
-			where: {
-				id: parseInt(id),
-			},
-		})
-
-		if (!product) {
-			return res.status(404).json({
-				message: "Product not found",
-			})
-		}
-
-		// check if new product name already exists
-		if (name) {
-			const newProductNameExists = await db.product.findUnique({
-				where: {
-					productName: name,
-				},
-			})
-
-			if (newProductNameExists) {
-				return res.status(400).json({
-					message: "Product name already exists",
-				})
-			}
-		}
-
-		const updatedProduct = await db.product.update({
-			where: {
-				id: parseInt(id),
-			},
-			data: {
-				productName: name,
-				amountAvailable,
-				cost,
-				sellerId,
-			},
-		})
-
-		return res.status(200).json({
-			message: "Product updated successfully",
-			updatedProduct,
-		})
-	} catch (e) {
-		console.log(`Error updating product: ${e}`)
-		return res.status(500).json({ message: "Failed to update product" })
+		return console.log(`Error deleting product: ${e}`)
 	}
 }
 
@@ -176,6 +186,14 @@ export const handleBuy = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params
 		const { userId, amount } = req.body
+
+		const result: Result = validationResult(req)
+
+		if (result.array().length > 0) {
+			return res.status(400).json({
+				errors: result.array(),
+			})
+		}
 
 		// check if product exists
 		const product = await db.product.findUnique({
@@ -247,6 +265,7 @@ export const handleBuy = async (req: Request, res: Response) => {
 			}),
 		])
 
+		// calculate change
 		let userChange = user.deposit! - updatedProduct.cost * amount
 		let userChangeInCoins: Record<number, number> = {}
 

@@ -6,11 +6,26 @@ import {
 	handleDeleteProduct,
 	handleBuy,
 } from "../controllers/productsController"
+import {
+	buyValidation,
+	createProductValidation,
+	deleteProductValidation,
+	updateProductValidation,
+} from "../validation/productsValidation"
 
 const router = Router()
 
-router.route("/").get(handleGetAllProducts).post(handleCreateProduct)
-router.route("/:id").put(handleUpdateProduct).delete(handleDeleteProduct)
-router.post("/:id/buy", handleBuy)
+router
+	.route("/")
+	.get(handleGetAllProducts)
+	.post(createProductValidation, handleCreateProduct)
+
+router
+	.route("/:id")
+	.put(updateProductValidation, handleUpdateProduct)
+	.delete(deleteProductValidation, handleDeleteProduct)
+
+// router.get("/:id/buy", (req, res) => res.json({ msg: req.params.id }))
+router.post("/:id/buy", buyValidation, handleBuy)
 
 export default router
