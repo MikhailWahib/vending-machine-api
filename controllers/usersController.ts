@@ -5,15 +5,10 @@ export const handleGetAllUsers = async (req: Request, res: Response) => {
 	try {
 		const users = await db.user.findMany()
 
-		if (!users) {
-			return res.status(500).json({
-				message: "Failed to get users",
-			})
-		}
-
 		return res.status(200).json(users)
 	} catch (e) {
-		throw new Error(`Error getting users: ${e}`)
+		console.error(`Error getting users: ${e}`)
+		return res.status(500).json({ message: "Failed to get users" })
 	}
 }
 
@@ -43,18 +38,13 @@ export const handleCreateUser = async (req: Request, res: Response) => {
 			},
 		})
 
-		if (!user) {
-			return res.status(500).json({
-				message: "Failed to create user",
-			})
-		}
-
 		return res.status(201).json({
 			message: "User created successfully",
 			user,
 		})
 	} catch (e) {
-		throw new Error(`Error creating user: ${e}`)
+		console.error(`Error creating user: ${e}`)
+		return res.status(500).json({ message: "Failed to create user" })
 	}
 }
 
@@ -101,18 +91,13 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 			},
 		})
 
-		if (!user) {
-			return res.status(500).json({
-				message: "Failed to update user",
-			})
-		}
-
 		return res.status(201).json({
 			message: "User updated successfully",
 			user,
 		})
 	} catch (e) {
-		throw new Error(`Error updating user: ${e}`)
+		console.error(`Error updating user: ${e}`)
+		return res.status(500).json({ message: "Failed to update user" })
 	}
 }
 
@@ -143,6 +128,7 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
 			message: "User deleted successfully",
 		})
 	} catch (e) {
-		throw new Error(`Error deleting user: ${e}`)
+		console.error(`Error deleting user: ${e}`)
+		res.status(500).json({ message: "Failed to delete user" })
 	}
 }
