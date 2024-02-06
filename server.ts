@@ -5,6 +5,7 @@ import dotenv from "dotenv"
 import userRouter from "./routes/usersRouter"
 import productRouter from "./routes/productsRouter"
 import depositRouter from "./routes/depositRouter"
+import buyRouter from "./routes/buyRouter"
 
 dotenv.config()
 
@@ -17,9 +18,13 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 // Routes
+// TODO: add Validation
+// TODO: make the deposit endpoint for users
+// TODO: make the buy endpoint for products
 app.use("/users", userRouter)
 app.use("/products", productRouter)
 app.use("/deposit", depositRouter)
+app.use("/buy", buyRouter)
 
 app.get("/", async (req: Request, res: Response) => {
 	res.json({ message: "Hello" })
