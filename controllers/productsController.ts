@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { db } from "../prisma/client"
-import { isSeller, userExists } from "../helpers/productsHelpers"
+import { userExists } from "../utils"
+import { isSeller } from "../helpers/productsHelpers"
 
 export const handleGetAllProducts = async (req: Request, res: Response) => {
 	try {
