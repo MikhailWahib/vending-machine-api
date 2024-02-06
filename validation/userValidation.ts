@@ -1,4 +1,4 @@
-import { body, query } from "express-validator"
+import { body, param } from "express-validator"
 import { acceptedValues } from "../constants"
 
 export const createUserValidation = [
@@ -7,7 +7,8 @@ export const createUserValidation = [
 		.withMessage("Username is required")
 		.isString()
 		.isLength({ min: 6, max: 20 })
-		.withMessage("Username must be between 6 and 20 characters"),
+		.withMessage("Username must be between 6 and 20 characters")
+		.toLowerCase(),
 
 	body("password")
 		.exists()
@@ -25,22 +26,29 @@ export const createUserValidation = [
 
 export const updateUserValidation = [
 	body("username")
+		.optional()
 		.isString()
 		.withMessage("Username must be a string")
 		.isLength({ min: 6, max: 20 })
-		.withMessage("Username must be between 6 and 20 characters"),
+		.withMessage("Username must be between 6 and 20 characters")
+		.toLowerCase(),
 
 	body("password")
+		.optional()
 		.isString()
 		.withMessage("Password must be a string")
 		.isLength({ min: 6 })
 		.withMessage("Password must be at least 8 characters long"),
 
-	body("role").isString().isIn(["buyer", "seller"]).withMessage("Invalid role"),
+	body("role")
+		.optional()
+		.isString()
+		.isIn(["buyer", "seller"])
+		.withMessage("Invalid role"),
 ]
 
 export const deleteUserValidation = [
-	query("id")
+	param("id")
 		.exists()
 		.withMessage("User ID is required")
 		.toInt()
@@ -49,7 +57,7 @@ export const deleteUserValidation = [
 ]
 
 export const depositValidation = [
-	query("id")
+	param("id")
 		.exists()
 		.withMessage("User ID is required")
 		.toInt()

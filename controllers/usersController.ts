@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { db } from "../prisma/client"
 import { acceptedValues } from "../constants"
 import { userExists, isBuyer } from "../utils"
+import { Result, validationResult } from "express-validator"
 
 export const handleGetAllUsers = async (req: Request, res: Response) => {
 	try {
@@ -17,6 +18,14 @@ export const handleGetAllUsers = async (req: Request, res: Response) => {
 export const handleCreateUser = async (req: Request, res: Response) => {
 	try {
 		const { username, password, role } = req.body
+
+		const result: Result = validationResult(req)
+
+		if (result.array().length > 0) {
+			return res.status(400).json({
+				errors: result.array(),
+			})
+		}
 
 		// check if username exists
 		const userExists = await db.user.findUnique({
@@ -35,8 +44,6 @@ export const handleCreateUser = async (req: Request, res: Response) => {
 			data: {
 				username,
 				password,
-				// set default deposit to 0 if role is buyer
-				deposit: role === "buyer" ? 0 : null,
 				role,
 			},
 		})
@@ -56,6 +63,14 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 		const { id } = req.params
 		const { username, password, role } = req.body
 
+		const result: Result = validationResult(req)
+
+		if (result.array().length > 0) {
+			return res.status(400).json({
+				errors: result.array(),
+			})
+		}
+
 		// check if username exists
 		const userExists = await db.user.findUnique({
 			where: {
@@ -70,16 +85,17 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 		}
 
 		// check if new username already exists
-		const newUsernameExists = await db.user.findUnique({
-			where: {
-				username,
-			},
-		})
-
-		if (newUsernameExists) {
-			return res.status(400).json({
-				message: "Username already exists",
+		if (username) {
+			const newUsernameExists = await db.user.findUnique({
+				where: {
+					username,
+				},
 			})
+			if (newUsernameExists) {
+				return res.status(400).json({
+					message: "Username already exists",
+				})
+			}
 		}
 
 		const user = await db.user.update({
@@ -106,6 +122,14 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 export const handleDeleteUser = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params
+
+		const result: Result = validationResult(req)
+
+		if (result.array().length > 0) {
+			return res.status(400).json({
+				errors: result.array(),
+			})
+		}
 
 		// check if username exists
 		const user = await db.user.findUnique({
@@ -139,6 +163,14 @@ export const handleDeposit = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params
 		const { deposit } = req.body
+
+		const result: Result = validationResult(req)
+
+		if (result.array().length > 0) {
+			return res.status(400).json({
+				errors: result.array(),
+			})
+		}
 
 		if (!acceptedValues.includes(deposit)) {
 			return res.status(400).json({
