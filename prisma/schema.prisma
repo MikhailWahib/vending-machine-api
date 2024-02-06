@@ -23,7 +23,7 @@ model Product {
   id              Int    @id @unique @default(autoincrement())
   amountAvailable Int
   cost            Float
-  productName     String
+  productName     String @unique
   seller          User   @relation(fields: [sellerId], references: [id])
   sellerId        Int
 }
