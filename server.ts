@@ -4,6 +4,7 @@ import bodyParser from "body-parser"
 import dotenv from "dotenv"
 import userRouter from "./routes/usersRouter"
 import productRouter from "./routes/productsRouter"
+import depositRouter from "./routes/depositRouter"
 
 dotenv.config()
 
@@ -18,6 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // Routes
 app.use("/users", userRouter)
 app.use("/products", productRouter)
+app.use("/deposit", depositRouter)
 
 app.get("/", async (req: Request, res: Response) => {
 	res.json({ message: "Hello" })
