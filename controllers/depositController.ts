@@ -1,15 +1,14 @@
 import { Request, Response } from "express"
 import { db } from "../prisma/client"
 import { isBuyer, userExists } from "../utils"
+import { acceptedValues } from "../constants"
 
 export const handleDeposit = async (req: Request, res: Response) => {
 	try {
 		const { userId } = req.params
 		const { deposit } = req.body
 
-		const acceptedDeposits = [5, 10, 20, 50, 100]
-
-		if (!acceptedDeposits.includes(deposit)) {
+		if (!acceptedValues.includes(deposit)) {
 			return res.status(400).json({
 				message: "Invalid deposit amount",
 			})

@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { db } from "../prisma/client"
 import { userExists } from "../utils"
 import { isSeller } from "../helpers/productsHelpers"
+import { acceptedValues } from "../constants"
 
 export const handleGetAllProducts = async (req: Request, res: Response) => {
 	try {
@@ -17,6 +18,7 @@ export const handleGetAllProducts = async (req: Request, res: Response) => {
 export const handleCreateProduct = async (req: Request, res: Response) => {
 	try {
 		const { productName, amountAvailable, cost, sellerId } = req.body
+		// TODO: insure that procuct cost in (5, 10, 20, 50, 100)
 		const name = productName.toLowerCase()
 
 		const productExists = await db.product.findUnique({
@@ -101,7 +103,18 @@ export const handleUpdateProduct = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params
 		const { productName, amountAvailable, cost, sellerId } = req.body
-		const name = productName.toLowerCase()
+		let name
+
+		if (productName) {
+			name = productName.toLowerCase()
+		}
+
+		// check if values are valid
+		if (!acceptedValues.includes(cost)) {
+			return res.status(400).json({
+				message: "Invalid cost value",
+			})
+		}
 
 		// check if product exists
 		const product = await db.product.findUnique({
@@ -117,16 +130,18 @@ export const handleUpdateProduct = async (req: Request, res: Response) => {
 		}
 
 		// check if new product name already exists
-		const newProductNameExists = await db.product.findUnique({
-			where: {
-				productName: name,
-			},
-		})
-
-		if (newProductNameExists) {
-			return res.status(400).json({
-				message: "Product name already exists",
+		if (name) {
+			const newProductNameExists = await db.product.findUnique({
+				where: {
+					productName: name,
+				},
 			})
+
+			if (newProductNameExists) {
+				return res.status(400).json({
+					message: "Product name already exists",
+				})
+			}
 		}
 
 		const updatedProduct = await db.product.update({
