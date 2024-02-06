@@ -33,7 +33,8 @@ export const handleCreateUser = async (req: Request, res: Response) => {
 			data: {
 				username,
 				password,
-				deposit,
+				// set default deposit to 0 if role is buyer
+				deposit: role === "buyer" ? 0 : deposit,
 				role,
 			},
 		})
@@ -51,7 +52,7 @@ export const handleCreateUser = async (req: Request, res: Response) => {
 export const handleUpdateUser = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params
-		const { username, password, deposit, role } = req.body
+		const { username, password, role } = req.body
 
 		// check if username exists
 		const userExists = await db.user.findUnique({
@@ -86,7 +87,6 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 			data: {
 				username,
 				password,
-				deposit,
 				role,
 			},
 		})
