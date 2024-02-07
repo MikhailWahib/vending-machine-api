@@ -5,6 +5,7 @@ import morgan from "morgan"
 import dotenv from "dotenv"
 import usersRouter from "../routes/usersRouter"
 import productsRouter from "../routes/productsRouter"
+import cors from "cors"
 
 export const createServer = () => {
 	const app = express()
@@ -18,6 +19,12 @@ export const createServer = () => {
 	app.use(bodyParser.urlencoded({ extended: false }))
 	app.use(cookieParser())
 	app.use(morgan("common"))
+	app.use(
+		cors({
+			credentials: true,
+			origin: process.env.FRONTEND_URL,
+		})
+	)
 
 	// Routes
 	app.use("/users", usersRouter)

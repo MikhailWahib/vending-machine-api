@@ -1,8 +1,3 @@
-// TODO: Add reset endpoint and its validation and tests
-// TODO: add cors
-// TODO: add swagger
-// TODO: add interface for request body
-// TODO: use express json parser instead of body-parser
 import { createServer } from "./utils/createServer"
 
 const app = createServer()
@@ -10,7 +5,9 @@ const app = createServer()
 const port = process.env.PORT || 3000
 
 app.get("/", (req, res) => {
-	res.send("Hello World!")
+	res.json({
+		message: "Hello World!",
+	})
 })
 
 app.listen(port, () => {
