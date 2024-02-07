@@ -33,12 +33,6 @@ export const createProductValidation = [
 			return value % 5 === 0
 		})
 		.withMessage("Cost must be a multiple of 5"),
-
-	cookie("jwt")
-		.exists()
-		.withMessage("Invalid token")
-		.isJWT()
-		.withMessage("Invalid token"),
 ]
 
 export const updateProductValidation = [
@@ -69,12 +63,6 @@ export const updateProductValidation = [
 			return value % 5 === 0
 		})
 		.withMessage("Cost must be a multiple of 5"),
-
-	cookie("jwt")
-		.exists()
-		.withMessage("Invalid token")
-		.isJWT()
-		.withMessage("Invalid token"),
 ]
 
 export const deleteProductValidation = [
@@ -84,12 +72,6 @@ export const deleteProductValidation = [
 		.toInt()
 		.isInt({ min: 0 })
 		.withMessage("Product ID must be an integer"),
-
-	cookie("jwt")
-		.exists()
-		.withMessage("Invalid token")
-		.isJWT()
-		.withMessage("Invalid token"),
 ]
 
 export const buyValidation = [
@@ -105,10 +87,4 @@ export const buyValidation = [
 		.withMessage("Amount is required")
 		.isInt({ min: 1 })
 		.withMessage("Amount must be an integer"),
-
-	cookie("jwt")
-		.exists()
-		.withMessage("Invalid token")
-		.isJWT()
-		.withMessage("Invalid token"),
 ]

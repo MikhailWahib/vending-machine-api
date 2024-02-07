@@ -264,3 +264,43 @@ export const handleDeposit = async (req: Request, res: Response) => {
 		console.error(`Error depositing: ${e}`)
 	}
 }
+
+export const handleReset = async (req: Request, res: Response) => {
+	try {
+		const id = req.userId
+
+		const result: Result = validationResult(req)
+
+		if (result.array().length > 0) {
+			console.log("hi")
+			return res.status(400).json({
+				errors: result.array(),
+			})
+		}
+
+		// check if user is a buyer
+		const role = await db.user.role(id)
+
+		if (role !== "buyer") {
+			return res.status(401).json({
+				message: "User is not a buyer",
+			})
+		}
+
+		const updatedUser = await db.user.update({
+			where: {
+				id,
+			},
+			data: {
+				deposit: 0,
+			},
+		})
+
+		return res.status(201).json({
+			message: "User reset successfully",
+			Balance: updatedUser.deposit,
+		})
+	} catch (e) {
+		console.error(`Error depositing: ${e}`)
+	}
+}

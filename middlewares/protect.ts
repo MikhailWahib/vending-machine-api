@@ -21,6 +21,10 @@ export const protect = (req: Request, res: Response, next: NextFunction) => {
 
 		const decoded = jwt.verify(token, JWT_SECRET!) as { id: number }
 
+		if (!decoded) {
+			return res.status(401).json({ message: "Invalid token" })
+		}
+
 		req.userId = decoded.id
 
 		next()

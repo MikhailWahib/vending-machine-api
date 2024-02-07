@@ -188,6 +188,15 @@ describe("PUT /users/deposit", () => {
 	})
 })
 
+describe("POST /users/logout", () => {
+	it("should logout a user", async () => {
+		const response = await request(app)
+			.post("/users/logout")
+			.set("Cookie", token)
+		expect(response.status).toBe(200)
+	})
+})
+
 describe("DELETE /users", () => {
 	it("should delete a user", async () => {
 		const response = await request(app).delete("/users").set("Cookie", token)

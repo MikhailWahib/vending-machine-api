@@ -1,14 +1,6 @@
 import { body, cookie, param } from "express-validator"
 import { acceptedValues } from "../constants"
 
-export const getCurrentUserValidation = [
-	cookie("jwt")
-		.exists()
-		.withMessage("Invalid token")
-		.isJWT()
-		.withMessage("Invalid token"),
-]
-
 export const authUserValidation = [
 	body("username")
 		.exists()
@@ -17,14 +9,6 @@ export const authUserValidation = [
 		.isLength({ min: 4, max: 20 })
 		.withMessage("Username must be between 4 and 20 characters")
 		.toLowerCase(),
-]
-
-export const logoutValidation = [
-	cookie("jwt")
-		.exists()
-		.withMessage("Invalid token")
-		.isJWT()
-		.withMessage("Invalid token"),
 ]
 
 export const createUserValidation = [
@@ -70,12 +54,6 @@ export const updateUserValidation = [
 		.isString()
 		.isIn(["buyer", "seller"])
 		.withMessage("Invalid role"),
-
-	cookie("jwt")
-		.exists()
-		.withMessage("Invalid token")
-		.isJWT()
-		.withMessage("Invalid token"),
 ]
 
 export const deleteUserValidation = [
