@@ -60,3 +60,9 @@ Start server
 ```bash
 npm run start
 ```
+
+Run tests
+
+```bash
+npm run test
+```
