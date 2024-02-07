@@ -48,7 +48,6 @@ export const handleAuthUser = async (req: Request, res: Response) => {
 		})
 	} catch (e) {
 		console.error(`Error authenticating user: ${e}`)
-		return res.status(500).json({ message: "Failed to authenticate user" })
 	}
 }
 
@@ -58,7 +57,6 @@ export const handleLogout = async (req: Request, res: Response) => {
 		return res.status(200).json({ message: "Logged out successfully" })
 	} catch (e) {
 		console.error(`Error logging out: ${e}`)
-		return res.status(500).json({ message: "Failed to log out" })
 	}
 }
 
@@ -80,7 +78,6 @@ export const handleGetCurrentUser = async (req: Request, res: Response) => {
 		})
 	} catch (e) {
 		console.error(`Error getting users: ${e}`)
-		return res.status(500).json({ message: "Failed to get users" })
 	}
 }
 
@@ -130,7 +127,6 @@ export const handleCreateUser = async (req: Request, res: Response) => {
 		})
 	} catch (e) {
 		console.error(`Error creating user: ${e}`)
-		return res.status(500).json({ message: "Failed to create user" })
 	}
 }
 
@@ -184,7 +180,6 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 		})
 	} catch (e) {
 		console.error(`Error updating user: ${e}`)
-		return res.status(500).json({ message: "Failed to update user" })
 	}
 }
 
@@ -226,7 +221,6 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
 		})
 	} catch (e) {
 		console.error(`Error deleting user: ${e}`)
-		res.status(500).json({ message: "Failed to delete user" })
 	}
 }
 
@@ -268,6 +262,5 @@ export const handleDeposit = async (req: Request, res: Response) => {
 		})
 	} catch (e) {
 		console.error(`Error depositing: ${e}`)
-		return res.status(500).json({ message: "Failed to deposit" })
 	}
 }

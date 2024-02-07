@@ -1,4 +1,3 @@
-// TODO: fix error handling
 // TODO: Add reset endpoint and its validation and tests
 // TODO: add cors
 // TODO: add swagger

@@ -10,7 +10,6 @@ export const handleGetAllProducts = async (req: Request, res: Response) => {
 		return res.status(200).json(products)
 	} catch (e) {
 		console.log(`Error getting products: ${e}`)
-		return res.status(500).json({ message: "Failed to get products" })
 	}
 }
 
@@ -35,7 +34,6 @@ export const handleGetProduct = async (req: Request, res: Response) => {
 		return res.status(200).json(product)
 	} catch (e) {
 		console.log(`Error getting product: ${e}`)
-		return res.status(500).json({ message: "Failed to get product" })
 	}
 }
 
@@ -95,7 +93,6 @@ export const handleCreateProduct = async (req: Request, res: Response) => {
 		})
 	} catch (e) {
 		console.log(`Error adding product: ${e}`)
-		return res.status(500).json({ message: "Failed to add product" })
 	}
 }
 
@@ -168,7 +165,6 @@ export const handleUpdateProduct = async (req: Request, res: Response) => {
 		})
 	} catch (e) {
 		console.log(`Error updating product: ${e}`)
-		return res.status(500).json({ message: "Failed to update product" })
 	}
 }
 
@@ -222,7 +218,7 @@ export const handleDeleteProduct = async (req: Request, res: Response) => {
 			message: "Product deleted successfully",
 		})
 	} catch (e) {
-		return console.log(`Error deleting product: ${e}`)
+		console.log(`Error deleting product: ${e}`)
 	}
 }
 
@@ -340,6 +336,5 @@ export const handleBuy = async (req: Request, res: Response) => {
 		})
 	} catch (e) {
 		console.log(`Error buying: ${e}`)
-		return res.status(500).json({ message: "Failed to buy" })
 	}
 }
