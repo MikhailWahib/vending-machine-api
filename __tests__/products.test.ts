@@ -11,8 +11,6 @@ let sellerToken: string
 let sellerId: number
 let productId: number
 
-let server: any
-
 beforeAll(async () => {
 	const prisma = new PrismaClient()
 	await prisma.$connect()
@@ -37,7 +35,7 @@ afterAll(async () => {
 	await prisma.$disconnect()
 })
 
-describe("Product Controller", () => {
+describe("POST /products", () => {
 	it("should create a new product", async () => {
 		const response = await request(app)
 			.post("/products")
@@ -77,12 +75,22 @@ describe("Product Controller", () => {
 			})
 		expect(response.status).toBe(400)
 	})
+})
 
+describe("GET /products", () => {
 	it("should get all products without auth", async () => {
 		const response = await request(app).get("/products")
 		expect(response.status).toBe(200)
 	})
 
+	it("should get all products", async () => {
+		const response = await request(app).get("/products")
+		expect(response.status).toBe(200)
+		expect(response.body.length).toBeGreaterThan(0)
+	})
+})
+
+describe("GET /products/:id", () => {
 	it("should get a product", async () => {
 		const response = await request(app).get(`/products/${productId}`)
 		expect(response.status).toBe(200)
@@ -93,13 +101,9 @@ describe("Product Controller", () => {
 		const response = await request(app).get(`/products/${productId}123`)
 		expect(response.status).toBe(404)
 	})
+})
 
-	it("should get all products", async () => {
-		const response = await request(app).get("/products")
-		expect(response.status).toBe(200)
-		expect(response.body.length).toBeGreaterThan(0)
-	})
-
+describe("PUT /products/:id", () => {
 	it("should update a product", async () => {
 		const response = await request(app)
 			.put(`/products/${productId}`)
@@ -121,12 +125,13 @@ describe("Product Controller", () => {
 			})
 		expect(response.status).toBe(404)
 	})
+})
 
-	// Register and login a new seller
-	const newSellerUsername = `seller${Math.floor(Math.random() * 1000)}`
-	let newSellerId: number
-	let newSellerToken: string
-
+// Register and login a new seller
+const newSellerUsername = `seller${Math.floor(Math.random() * 1000)}`
+let newSellerId: number
+let newSellerToken: string
+describe("PUT /products/:id", () => {
 	it("should update the product owner", async () => {
 		await request(app).post("/users").send({
 			username: newSellerUsername,
@@ -160,7 +165,9 @@ describe("Product Controller", () => {
 			})
 		expect(response.status).toBe(401)
 	})
+})
 
+describe("DELETE /products/:id", () => {
 	it("should not delete a product that does not exist", async () => {
 		const response = await request(app)
 			.delete(`/products/${productId}123`)
@@ -174,9 +181,12 @@ describe("Product Controller", () => {
 			.set("Cookie", newSellerToken)
 		expect(response.status).toBe(401)
 	})
+})
 
+describe("POST /products/buy/:id", () => {
 	const buyerUsername = `buyer${Math.floor(Math.random() * 1000)}`
 	let buyerToken: string
+
 	it("should buy a product", async () => {
 		//create a buyer user
 		await request(app).post("/users").send({
@@ -284,7 +294,9 @@ describe("Product Controller", () => {
 		expect(response.status).toBe(400)
 		expect(response.body.message).toBeDefined()
 	})
+})
 
+describe("DELETE /products/:id", () => {
 	it("should delete a product", async () => {
 		const response = await request(app)
 			.delete(`/products/${productId}`)

@@ -9,7 +9,7 @@ const randomSellerUsername = `selleruser${Math.floor(Math.random() * 1000)}`
 
 let token: string
 
-describe("User Controller", () => {
+describe("POST /users", () => {
 	const prisma = new PrismaClient()
 
 	beforeAll(async () => {
@@ -73,7 +73,9 @@ describe("User Controller", () => {
 		})
 		expect(response.status).toBe(400)
 	})
+})
 
+describe("POST /users/auth", () => {
 	it("should authenticate a user", async () => {
 		const response = await request(app).post("/users/auth").send({
 			username: randomBuyerUsername,
@@ -101,7 +103,9 @@ describe("User Controller", () => {
 		})
 		expect(response.status).toBe(404)
 	})
+})
 
+describe("PUT /users/deposit", () => {
 	it("should deposit to a user's account", async () => {
 		const response = await request(app)
 			.put("/users/deposit")
@@ -121,7 +125,9 @@ describe("User Controller", () => {
 			})
 		expect(response.status).toBe(400)
 	})
+})
 
+describe("PUT /users", () => {
 	it("should update a user's username", async () => {
 		const response = await request(app)
 			.put("/users")
@@ -154,7 +160,9 @@ describe("User Controller", () => {
 		expect(response.status).toBe(201)
 		expect(response.body.user.role).toBe("seller")
 	})
+})
 
+describe("POST /users/auth", () => {
 	it("should authenticate after updating a user", async () => {
 		const response = await request(app)
 			.post("/users/auth")
@@ -166,7 +174,9 @@ describe("User Controller", () => {
 		expect(response.headers["set-cookie"]).toBeTruthy()
 		token = response.headers["set-cookie"][0]
 	})
+})
 
+describe("PUT /users/deposit", () => {
 	it("should not deposit to a user's account after updating a user's role to seller", async () => {
 		const response = await request(app)
 			.put("/users/deposit")
@@ -176,12 +186,16 @@ describe("User Controller", () => {
 			})
 		expect(response.status).toBe(401)
 	})
+})
 
+describe("DELETE /users", () => {
 	it("should delete a user", async () => {
 		const response = await request(app).delete("/users").set("Cookie", token)
 		expect(response.status).toBe(200)
 	})
+})
 
+describe("POST /users/auth", () => {
 	it("should not authenticate after deleting a user", async () => {
 		const response = await request(app).post("/users/auth").send({
 			username: "buyeruser1",
