@@ -183,7 +183,7 @@ describe("DELETE /products/:id", () => {
 	})
 })
 
-describe("POST /products/buy/:id", () => {
+describe("POST /products/:id/buy", () => {
 	const buyerUsername = `buyer${Math.floor(Math.random() * 1000)}`
 	let buyerToken: string
 	let buyerId: number
@@ -213,7 +213,7 @@ describe("POST /products/buy/:id", () => {
 			})
 
 		const response = await request(app)
-			.post(`/api/v1/products/buy/${productId}`)
+			.post(`/api/v1/products/${productId}/buy`)
 			.set("Cookie", buyerToken)
 			.send({
 				amount: 1,
@@ -223,7 +223,7 @@ describe("POST /products/buy/:id", () => {
 
 	it("should not buy a product that does not exist", async () => {
 		const response = await request(app)
-			.post(`/api/v1/products/buy/${productId}123`)
+			.post(`/api/v1/products/${productId}123/buy`)
 			.set("Cookie", buyerToken)
 			.send({
 				amount: 1,
@@ -233,7 +233,7 @@ describe("POST /products/buy/:id", () => {
 
 	it("should not buy more than the available amount", async () => {
 		const response = await request(app)
-			.post(`/api/v1/products/buy/${productId}`)
+			.post(`/api/v1/products/${productId}/buy`)
 			.set("Cookie", buyerToken)
 			.send({
 				amount: 11000,
@@ -243,7 +243,7 @@ describe("POST /products/buy/:id", () => {
 
 	it("should not buy less than 1", async () => {
 		const response = await request(app)
-			.post(`/api/v1/products/buy/${productId}`)
+			.post(`/api/v1/products/${productId}/buy`)
 			.set("Cookie", buyerToken)
 			.send({
 				amount: 0,
@@ -253,7 +253,7 @@ describe("POST /products/buy/:id", () => {
 
 	it("should not buy if the user is not a buyer", async () => {
 		const response = await request(app)
-			.post(`/api/v1/products/buy/${productId}`)
+			.post(`/api/v1/products/${productId}/buy`)
 			.set("Cookie", sellerToken)
 			.send({
 				amount: 1,
@@ -263,7 +263,7 @@ describe("POST /products/buy/:id", () => {
 
 	it("should not buy if the user is not logged in", async () => {
 		const response = await request(app)
-			.post(`/api/v1/products/buy/${productId}`)
+			.post(`/api/v1/products/${productId}/buy`)
 			.send({
 				amount: 1,
 			})
@@ -272,7 +272,7 @@ describe("POST /products/buy/:id", () => {
 
 	it("should not buy if the user has insufficient funds", async () => {
 		const response = await request(app)
-			.post(`/api/v1/products/buy/${productId}`)
+			.post(`/api/v1/products/${productId}/buy`)
 			.set("Cookie", buyerToken)
 			.send({
 				amount: 100,
@@ -290,7 +290,7 @@ describe("POST /products/buy/:id", () => {
 			})
 
 		const response = await request(app)
-			.post(`/api/v1/products/buy/${productId}`)
+			.post(`/api/v1/products/${productId}/buy`)
 			.set("Cookie", buyerToken)
 			.send({
 				amount: 1,

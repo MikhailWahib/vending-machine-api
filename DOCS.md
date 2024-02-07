@@ -80,7 +80,48 @@ response:
 }
 ```
 
-- ### PUT /api/v1/users/deposit
+- ### PUT /api/v1/users/{id}
+
+updates user
+
+body:
+
+```json
+{
+	// optional fields
+	"username": "string",
+	"password": "string",
+	"role": "string"
+}
+```
+
+response:
+
+```json
+{
+	"message": "string",
+	"user": {
+		"id": "string",
+		"username": "string",
+		"role": "string",
+		"deposit": number
+	}
+}
+```
+
+- ### DELETE /api/v1/users/{id}
+
+deletes user
+
+response:
+
+```json
+{
+	"message": "string"
+}
+```
+
+- ### PUT /api/v1/users/{id}/deposit
 
 deposits money
 
@@ -101,7 +142,7 @@ response:
 }
 ```
 
-### PUT /api/v1/users/reset
+### PUT /api/v1/users/{id}/reset
 
 resets user deposit
 
@@ -187,8 +228,50 @@ body:
 
 ```json
 {
+	// optional fields
     "productName": "string",
     "cost": number,
     "amountAvailable": number,
 }
 ```
+
+response:
+
+```json
+{
+	"message": "string",
+	"product": {
+		"id": "string",
+		"productName": "string",
+		"cost": number,
+		"amountAvailable": number,
+		"sellerId": number
+	}
+}
+```
+
+### DELETE /api/v1/products/:id
+
+deletes product
+
+response:
+
+```json
+{
+	"message": "string"
+}
+```
+
+### POST /api/v1/products/:id/buy
+
+buys product
+
+body:
+
+```json
+{
+	"amount": number
+}
+```
+
+response:

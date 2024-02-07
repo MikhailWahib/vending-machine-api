@@ -29,6 +29,6 @@ router
 	.put(protect, updateProductValidation, handleUpdateProduct)
 	.delete(protect, deleteProductValidation, handleDeleteProduct)
 
-router.post("/buy/:id", protect, buyValidation, handleBuy)
+router.post("/:id/buy", protect, buyValidation, handleBuy)
 
 export default router
