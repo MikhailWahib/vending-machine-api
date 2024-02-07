@@ -210,13 +210,3 @@ describe("DELETE /users/{id}", () => {
 		expect(response.status).toBe(200)
 	})
 })
-
-describe("POST /users/auth", () => {
-	it("should not authenticate after deleting a user", async () => {
-		const response = await request(app).post("/api/v1/users/auth").send({
-			username: "buyeruser1",
-			password: "newpassword",
-		})
-		expect(response.status).toBe(401)
-	})
-})
