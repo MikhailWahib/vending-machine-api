@@ -275,3 +275,16 @@ body:
 ```
 
 response:
+
+```json
+{
+	"message": "string",
+	"product": {
+		"id": "string",
+		"productName": "string",
+		"cost": number,
+		"amountAvailable": number,
+		"sellerId": number
+	}
+}
+```
