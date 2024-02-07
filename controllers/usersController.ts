@@ -274,19 +274,24 @@ export const handleDeposit = async (req: Request, res: Response) => {
 
 export const handleReset = async (req: Request, res: Response) => {
 	try {
-		const id = req.userId
+		const { id } = req.params
 
 		const result: Result = validationResult(req)
 
 		if (result.array().length > 0) {
-			console.log("hi")
 			return res.status(400).json({
 				errors: result.array(),
 			})
 		}
 
+		if (parseInt(id) !== req.userId) {
+			return res.status(401).json({
+				message: "Unauthorized",
+			})
+		}
+
 		// check if user is a buyer
-		const role = await db.user.role(id)
+		const role = await db.user.role(parseInt(id))
 
 		if (role !== "buyer") {
 			return res.status(401).json({
@@ -296,7 +301,7 @@ export const handleReset = async (req: Request, res: Response) => {
 
 		const updatedUser = await db.user.update({
 			where: {
-				id,
+				id: parseInt(id),
 			},
 			data: {
 				deposit: 0,
