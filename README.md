@@ -4,6 +4,8 @@
 
 This is an API for a vending machine built using NodeJS, Express, TypeScript and SQLite3 with Prisma ORM.
 
+For Documentation go to DOCS.md
+
 ## Install
 
 make sure you have `node`, `npm` and `sqlite3` installed.
@@ -25,6 +27,11 @@ Install dependencies
 ```bash
 npm install
 ```
+
+## Environment Setup
+
+- go to `.env.example` and fill it
+- rename `.env.example` to `.env`
 
 ## Database Setup
 
