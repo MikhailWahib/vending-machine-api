@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { db } from "../prisma/client"
 import { Result, validationResult } from "express-validator"
 import { signToken } from "../utils/signToken"
+import { parse } from "dotenv"
 
 export const handleAuthUser = async (req: Request, res: Response) => {
 	try {
@@ -226,7 +227,7 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
 
 export const handleDeposit = async (req: Request, res: Response) => {
 	try {
-		const id = req.userId
+		const { id } = req.params
 		const { deposit } = req.body
 
 		const result: Result = validationResult(req)
@@ -237,8 +238,14 @@ export const handleDeposit = async (req: Request, res: Response) => {
 			})
 		}
 
+		if (parseInt(id) !== req.userId) {
+			return res.status(401).json({
+				message: "Unauthorized",
+			})
+		}
+
 		// check if user is a seller
-		const role = await db.user.role(id)
+		const role = await db.user.role(parseInt(id))
 
 		if (role !== "buyer") {
 			return res.status(401).json({
@@ -248,7 +255,7 @@ export const handleDeposit = async (req: Request, res: Response) => {
 
 		const updatedUser = await db.user.update({
 			where: {
-				id,
+				id: parseInt(id),
 			},
 			data: {
 				deposit: {

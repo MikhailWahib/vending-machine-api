@@ -20,17 +20,19 @@ import { protect } from "../middlewares/protect"
 
 const router = Router()
 
-router
-	.route("/")
-	.get(protect, handleGetCurrentUser)
-	.post(createUserValidation, handleCreateUser)
-	.put(protect, updateUserValidation, handleUpdateUser)
-	.delete(protect, deleteUserValidation, handleDeleteUser)
+router.post("/", createUserValidation, handleCreateUser)
 
 router.post("/auth", authUserValidation, handleAuthUser)
 router.post("/logout", handleLogout)
 
-router.put("/deposit", protect, depositValidation, handleDeposit)
+router
+	.route("/:id")
+	.put(protect, updateUserValidation, updateUserValidation, handleUpdateUser)
+	.delete(protect, deleteUserValidation, deleteUserValidation, handleDeleteUser)
+
+router.get("/current", protect, handleGetCurrentUser)
+
+router.put("/:id/deposit", protect, depositValidation, handleDeposit)
 
 router.put("/reset", protect, handleReset)
 

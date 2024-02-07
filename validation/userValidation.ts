@@ -1,4 +1,4 @@
-import { body, cookie, param } from "express-validator"
+import { body, param } from "express-validator"
 import { acceptedValues } from "../constants"
 
 export const authUserValidation = [
@@ -34,6 +34,12 @@ export const createUserValidation = [
 ]
 
 export const updateUserValidation = [
+	param("id")
+		.exists()
+		.toInt()
+		.isInt({ min: 1 })
+		.withMessage("User ID must be an integer"),
+
 	body("username")
 		.optional()
 		.isString()
@@ -57,23 +63,23 @@ export const updateUserValidation = [
 ]
 
 export const deleteUserValidation = [
-	cookie("jwt")
+	param("id")
 		.exists()
-		.withMessage("Invalid token")
-		.isJWT()
-		.withMessage("Invalid token"),
+		.toInt()
+		.isInt({ min: 1 })
+		.withMessage("User ID must be an integer"),
 ]
 
 export const depositValidation = [
+	param("id")
+		.exists()
+		.toInt()
+		.isInt({ min: 1 })
+		.withMessage("User ID must be an integer"),
+
 	body("deposit")
 		.isInt({ min: 5 })
 		.withMessage("Deposit must be an integer and at least 5")
 		.isIn(acceptedValues)
 		.withMessage("Invalid deposit amount"),
-
-	cookie("jwt")
-		.exists()
-		.withMessage("Invalid token")
-		.isJWT()
-		.withMessage("Invalid token"),
 ]

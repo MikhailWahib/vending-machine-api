@@ -6,6 +6,7 @@ const app = createServer()
 
 const randomBuyerUsername = `buyeruser${Math.floor(Math.random() * 1000)}`
 const randomSellerUsername = `selleruser${Math.floor(Math.random() * 1000)}`
+let buyerId: number
 
 let token: string
 
@@ -85,7 +86,9 @@ describe("POST /users/auth", () => {
 		expect(response.body.username).toBe(randomBuyerUsername)
 		expect(response.body.role).toBe("buyer")
 		expect(response.headers["set-cookie"]).toBeTruthy()
+
 		token = response.headers["set-cookie"][0]
+		buyerId = response.body.id
 	})
 
 	it("should not authenticate a user with an invalid password", async () => {
@@ -105,10 +108,10 @@ describe("POST /users/auth", () => {
 	})
 })
 
-describe("PUT /users/deposit", () => {
+describe("PUT /users/{id}/deposit", () => {
 	it("should deposit to a user's account", async () => {
 		const response = await request(app)
-			.put("/api/v1/users/deposit")
+			.put(`/api/v1/users/${buyerId}/deposit`)
 			.set("Cookie", token)
 			.send({
 				deposit: 10,
@@ -118,7 +121,7 @@ describe("PUT /users/deposit", () => {
 
 	it("should not deposit to a user's account with an invalid deposit", async () => {
 		const response = await request(app)
-			.put("/api/v1/users/deposit")
+			.put(`/api/v1/users/${buyerId}/deposit`)
 			.set("Cookie", token)
 			.send({
 				deposit: 12,
@@ -127,10 +130,10 @@ describe("PUT /users/deposit", () => {
 	})
 })
 
-describe("PUT /users", () => {
+describe("PUT /users/{id}", () => {
 	it("should update a user's username", async () => {
 		const response = await request(app)
-			.put("/api/v1/users")
+			.put("/api/v1/users/" + buyerId)
 			.set("Cookie", token)
 			.send({
 				username: randomBuyerUsername + "1",
@@ -141,7 +144,7 @@ describe("PUT /users", () => {
 
 	it("should update user's password", async () => {
 		const response = await request(app)
-			.put("/api/v1/users")
+			.put("/api/v1/users/" + buyerId)
 			.set("Cookie", token)
 			.send({
 				password: "newpassword1",
@@ -152,7 +155,7 @@ describe("PUT /users", () => {
 
 	it("should update a user's role", async () => {
 		const response = await request(app)
-			.put("/api/v1/users")
+			.put("/api/v1/users/" + buyerId)
 			.set("Cookie", token)
 			.send({
 				role: "seller",
@@ -172,14 +175,16 @@ describe("POST /users/auth", () => {
 			})
 		expect(response.status).toBe(200)
 		expect(response.headers["set-cookie"]).toBeTruthy()
+
 		token = response.headers["set-cookie"][0]
+		buyerId = response.body.id
 	})
 })
 
-describe("PUT /users/deposit", () => {
+describe("PUT /users/{id}/deposit", () => {
 	it("should not deposit to a user's account after updating a user's role to seller", async () => {
 		const response = await request(app)
-			.put("/api/v1/users/deposit")
+			.put(`/api/v1/users/${buyerId}/deposit`)
 			.set("Cookie", token)
 			.send({
 				deposit: 10,
@@ -197,10 +202,10 @@ describe("POST /users/logout", () => {
 	})
 })
 
-describe("DELETE /users", () => {
+describe("DELETE /users/{id}", () => {
 	it("should delete a user", async () => {
 		const response = await request(app)
-			.delete("/api/v1/users")
+			.delete("/api/v1/users/" + buyerId)
 			.set("Cookie", token)
 		expect(response.status).toBe(200)
 	})
