@@ -1,7 +1,5 @@
 import { Request, Response } from "express"
 import { db } from "../prisma/client"
-import { userExists } from "../utils"
-import { isSeller } from "../helpers/productsHelpers"
 import { acceptedValues } from "../constants"
 import { Result, validationResult } from "express-validator"
 
@@ -18,7 +16,8 @@ export const handleGetAllProducts = async (req: Request, res: Response) => {
 
 export const handleCreateProduct = async (req: Request, res: Response) => {
 	try {
-		const { productName, amountAvailable, cost, sellerId } = req.body
+		const sellerId = req.userId
+		const { productName, amountAvailable, cost } = req.body
 
 		const result: Result = validationResult(req)
 
@@ -28,11 +27,7 @@ export const handleCreateProduct = async (req: Request, res: Response) => {
 			})
 		}
 
-		const productExists = await db.product.findUnique({
-			where: {
-				productName,
-			},
-		})
+		const productExists = await db.product.nameExists(productName)
 
 		// check if product exists
 		if (productExists) {
@@ -42,20 +37,25 @@ export const handleCreateProduct = async (req: Request, res: Response) => {
 		}
 
 		// check if user exists
-		if (!(await userExists(sellerId))) {
+		const userExists = await db.user.exists(sellerId)
+
+		if (!userExists) {
 			return res.status(404).json({
 				message: "User not found",
 			})
 		}
 
 		// check if user is a seller
-		if (!(await isSeller(sellerId))) {
+		const userRole = await db.user.role(sellerId)
+
+		if (userRole !== "seller") {
 			return res.status(401).json({
-				message: "This user is not allowed to add products",
+				message: "User is not a seller",
 			})
 		}
 
 		const product = await db.product.create({
+			// @ts-ignore
 			data: {
 				productName,
 				amountAvailable,
@@ -77,12 +77,8 @@ export const handleCreateProduct = async (req: Request, res: Response) => {
 export const handleUpdateProduct = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params
-		const { productName, amountAvailable, cost, sellerId } = req.body
-		// let name
-
-		// if (productName) {
-		// 	name = productName.toLowerCase()
-		// }
+		const sellerId = req.userId
+		const { productName, amountAvailable, cost } = req.body
 
 		const result: Result = validationResult(req)
 
@@ -93,11 +89,7 @@ export const handleUpdateProduct = async (req: Request, res: Response) => {
 		}
 
 		// check if product exists
-		const product = await db.product.findUnique({
-			where: {
-				id: parseInt(id),
-			},
-		})
+		const product = await db.product.idExists(parseInt(id))
 
 		if (!product) {
 			return res.status(404).json({
@@ -107,11 +99,7 @@ export const handleUpdateProduct = async (req: Request, res: Response) => {
 
 		// check if new product name already exists
 		if (productName) {
-			const newProductNameExists = await db.product.findUnique({
-				where: {
-					productName,
-				},
-			})
+			const newProductNameExists = await db.product.nameExists(productName)
 
 			if (newProductNameExists) {
 				return res.status(400).json({
@@ -144,8 +132,8 @@ export const handleUpdateProduct = async (req: Request, res: Response) => {
 
 export const handleDeleteProduct = async (req: Request, res: Response) => {
 	try {
-		// TODO: add authorization
 		const { id } = req.params
+		const sellerId = req.userId
 
 		const result: Result = validationResult(req)
 
@@ -155,12 +143,17 @@ export const handleDeleteProduct = async (req: Request, res: Response) => {
 			})
 		}
 
+		// check if user is a seller
+		const userRole = await db.user.role(sellerId)
+
+		if (userRole !== "seller") {
+			return res.status(401).json({
+				message: "User is not a seller",
+			})
+		}
+
 		// check if product exists
-		const product = await db.product.findUnique({
-			where: {
-				id: parseInt(id),
-			},
-		})
+		const product = await db.product.idExists(parseInt(id))
 
 		if (!product) {
 			return res.status(404).json({
@@ -185,7 +178,8 @@ export const handleDeleteProduct = async (req: Request, res: Response) => {
 export const handleBuy = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params
-		const { userId, amount } = req.body
+		const { amount } = req.body
+		const userId = req.userId
 
 		const result: Result = validationResult(req)
 
@@ -195,26 +189,35 @@ export const handleBuy = async (req: Request, res: Response) => {
 			})
 		}
 
-		// check if product exists
+		// check if user is a buyer
+		const userRole = await db.user.role(userId)
+
+		if (userRole !== "buyer") {
+			return res.status(401).json({
+				message: "User is not a buyer",
+			})
+		}
+
 		const product = await db.product.findUnique({
 			where: {
 				id: parseInt(id),
 			},
 		})
 
+		// check if product exists
 		if (!product) {
 			return res.status(404).json({
 				message: "Product not found",
 			})
 		}
 
-		// check if user exists
 		const user = await db.user.findUnique({
 			where: {
-				id: parseInt(userId),
+				id: userId,
 			},
 		})
 
+		// check if user exists
 		if (!user) {
 			return res.status(404).json({
 				message: "User not found",
@@ -255,7 +258,7 @@ export const handleBuy = async (req: Request, res: Response) => {
 			}),
 			db.user.update({
 				where: {
-					id: parseInt(userId),
+					id: userId,
 				},
 				data: {
 					deposit: {

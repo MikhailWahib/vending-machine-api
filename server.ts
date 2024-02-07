@@ -1,6 +1,15 @@
+// TODO: add Authentication and Authorization
+// TODO: make seller only create products
+// TODO: hash passwords
+// TODO: add interface for request body
+// TODO: fix error handling
+// TODO: add cors
+// TODO: tests
+// TODO: use express json parser instead of body-parser
 import express, { Request, Response } from "express"
 import morgan from "morgan"
 import bodyParser from "body-parser"
+import cookieParser from "cookie-parser"
 import dotenv from "dotenv"
 import userRouter from "./routes/usersRouter"
 import productRouter from "./routes/productsRouter"
@@ -11,12 +20,12 @@ const app = express()
 const port = process.env.PORT || 3000
 
 // Middlewares
-app.use(morgan("common"))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(cookieParser())
+app.use(morgan("common"))
 
 // Routes
-// TODO: add Validation
 app.use("/users", userRouter)
 app.use("/products", productRouter)
 

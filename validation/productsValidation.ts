@@ -25,11 +25,11 @@ export const createProductValidation = [
 		.isIn(acceptedValues)
 		.withMessage("Invalid cost value"),
 
-	// cookie("jwt")
-	// 	.exists()
-	// 	.withMessage("Invalid token")
-	// 	.isJWT()
-	// 	.withMessage("Invalid token"),
+	cookie("jwt")
+		.exists()
+		.withMessage("Invalid token")
+		.isJWT()
+		.withMessage("Invalid token"),
 ]
 
 export const updateProductValidation = [
@@ -59,11 +59,11 @@ export const updateProductValidation = [
 		.isIn(acceptedValues)
 		.withMessage("Invalid cost value"),
 
-	// cookie("jwt")
-	// 	.exists()
-	// 	.withMessage("Invalid token")
-	// 	.isJWT()
-	// 	.withMessage("Invalid token"),
+	cookie("jwt")
+		.exists()
+		.withMessage("Invalid token")
+		.isJWT()
+		.withMessage("Invalid token"),
 ]
 
 export const deleteProductValidation = [
@@ -74,11 +74,11 @@ export const deleteProductValidation = [
 		.isInt()
 		.withMessage("Product ID must be an integer"),
 
-	// cookie("jwt")
-	// 	.exists()
-	// 	.withMessage("Invalid token")
-	// 	.isJWT()
-	// 	.withMessage("Invalid token"),
+	cookie("jwt")
+		.exists()
+		.withMessage("Invalid token")
+		.isJWT()
+		.withMessage("Invalid token"),
 ]
 
 export const buyValidation = [
@@ -104,9 +104,9 @@ export const buyValidation = [
 		.isIn(acceptedValues)
 		.withMessage("Invalid amount value"),
 
-	// cookie("jwt")
-	// 	.exists()
-	// 	.withMessage("Invalid token")
-	// 	.isJWT()
-	// 	.withMessage("Invalid token"),
+	cookie("jwt")
+		.exists()
+		.withMessage("Invalid token")
+		.isJWT()
+		.withMessage("Invalid token"),
 ]

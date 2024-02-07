@@ -12,20 +12,21 @@ import {
 	deleteProductValidation,
 	updateProductValidation,
 } from "../validation/productsValidation"
+import { protect } from "../middlewares/protect"
 
 const router = Router()
 
 router
 	.route("/")
 	.get(handleGetAllProducts)
-	.post(createProductValidation, handleCreateProduct)
+	.post(protect, createProductValidation, handleCreateProduct)
 
 router
 	.route("/:id")
-	.put(updateProductValidation, handleUpdateProduct)
-	.delete(deleteProductValidation, handleDeleteProduct)
+	.put(protect, updateProductValidation, handleUpdateProduct)
+	.delete(protect, deleteProductValidation, handleDeleteProduct)
 
 // router.get("/:id/buy", (req, res) => res.json({ msg: req.params.id }))
-router.post("/:id/buy", buyValidation, handleBuy)
+router.post("/:id/buy", protect, buyValidation, handleBuy)
 
 export default router
