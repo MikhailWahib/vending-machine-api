@@ -186,6 +186,7 @@ describe("DELETE /products/:id", () => {
 describe("POST /products/buy/:id", () => {
 	const buyerUsername = `buyer${Math.floor(Math.random() * 1000)}`
 	let buyerToken: string
+	let buyerId: number
 
 	it("should buy a product", async () => {
 		//create a buyer user
@@ -201,10 +202,11 @@ describe("POST /products/buy/:id", () => {
 		})
 
 		buyerToken = loginResponse.headers["set-cookie"][0]
+		buyerId = loginResponse.body.id
 
 		//deposit money
 		await request(app)
-			.put(`/api/v1/users/deposit`)
+			.put(`/api/v1/users/${buyerId}/deposit`)
 			.set("Cookie", buyerToken)
 			.send({
 				deposit: 100,
