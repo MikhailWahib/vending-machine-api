@@ -4,7 +4,7 @@
 
 This is an API for a vending machine built using NodeJS, Express, TypeScript and SQLite3 with Prisma ORM.
 
-For Documentation go to DOCS.md
+For Documentation go to https://github.com/MikhailWahib/vending-machine-api/blob/main/DOCS.md
 
 ## Install
 
@@ -13,7 +13,7 @@ make sure you have `node`, `npm` and `sqlite3` installed.
 Clone the repository
 
 ```bash
-git clone https://github.com/FlapKap/vending-machine-api
+git clone https://github.com/MikhailWahib/vending-machine-api
 ```
 
 Navigate to the folder
