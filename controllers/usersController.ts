@@ -1,6 +1,5 @@
 import { Request, Response } from "express"
 import { db } from "../prisma/client"
-import { getUserRole } from "../utils"
 import { Result, validationResult } from "express-validator"
 import { signToken } from "../utils/signToken"
 
@@ -28,9 +27,14 @@ export const handleAuthUser = async (req: Request, res: Response) => {
 			})
 		}
 
-		if (user.password !== password) {
+		const isPasswordValid = await db.user.comparePassword(
+			password,
+			user.password
+		)
+
+		if (!isPasswordValid) {
 			return res.status(401).json({
-				message: "Invalid credentials",
+				message: "Invalid password",
 			})
 		}
 
@@ -100,10 +104,12 @@ export const handleCreateUser = async (req: Request, res: Response) => {
 			})
 		}
 
+		const hashedPassword = await db.user.hashPassword(password)
+
 		const user = await db.user.create({
 			data: {
 				username,
-				password,
+				password: hashedPassword,
 				role,
 			},
 		})
@@ -145,13 +151,19 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 			}
 		}
 
+		let hashedPassword: string | undefined
+		if (password) {
+			const hashed = await db.user.hashPassword(password)
+			hashedPassword = hashed
+		}
+
 		const user = await db.user.update({
 			where: {
 				id,
 			},
 			data: {
 				username,
-				password,
+				password: hashedPassword,
 				role,
 			},
 		})
@@ -222,7 +234,7 @@ export const handleDeposit = async (req: Request, res: Response) => {
 		}
 
 		// check if user is a seller
-		const role = await getUserRole(id)
+		const role = await db.user.role(id)
 
 		if (role !== "seller") {
 			return res.status(401).json({

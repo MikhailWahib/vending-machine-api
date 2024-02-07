@@ -1,6 +1,3 @@
-// TODO: add Authentication and Authorization
-// TODO: make seller only create products
-// TODO: hash passwords
 // TODO: add interface for request body
 // TODO: fix error handling
 // TODO: add cors
