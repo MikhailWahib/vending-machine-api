@@ -34,6 +34,6 @@ router.get("/current", protect, handleGetCurrentUser)
 
 router.put("/:id/deposit", protect, depositValidation, handleDeposit)
 
-router.put("/reset", protect, handleReset)
+router.put("/:id/reset", protect, handleReset)
 
 export default router
