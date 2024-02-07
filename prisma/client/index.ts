@@ -45,6 +45,15 @@ export const db = new PrismaClient().$extends({
 				})
 				return !!product
 			},
+
+			async isOwner(id?: number, sellerId?: number) {
+				const product = await db.product.findUnique({
+					where: {
+						id,
+					},
+				})
+				return product?.sellerId === sellerId
+			},
 		},
 	},
 })

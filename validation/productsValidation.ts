@@ -1,6 +1,13 @@
 import { body, cookie, param } from "express-validator"
 import { acceptedValues } from "../constants"
-import { handleBuy } from "../controllers/productsController"
+
+export const getProductValidation = [
+	param("id")
+		.exists()
+		.toInt()
+		.isInt({ min: 0 })
+		.withMessage("Product ID must be an integer"),
+]
 
 export const createProductValidation = [
 	body("productName")
@@ -15,15 +22,17 @@ export const createProductValidation = [
 	body("amountAvailable")
 		.exists()
 		.withMessage("Amount available is required")
-		.isInt()
+		.isInt({ min: 0 })
 		.withMessage("Amount available must be an integer"),
 	body("cost")
 		.exists()
 		.withMessage("Cost is required")
-		.isInt()
-		.withMessage("Cost must be an integer")
-		.isIn(acceptedValues)
-		.withMessage("Invalid cost value"),
+		.isInt({ min: 5 })
+		.withMessage("Cost must be an integer and at least 5")
+		.custom((value) => {
+			return value % 5 === 0
+		})
+		.withMessage("Cost must be a multiple of 5"),
 
 	cookie("jwt")
 		.exists()
@@ -36,7 +45,7 @@ export const updateProductValidation = [
 	param("id")
 		.exists()
 		.toInt()
-		.isInt()
+		.isInt({ min: 0 })
 		.withMessage("Product ID must be an integer"),
 
 	body("productName")
@@ -49,15 +58,17 @@ export const updateProductValidation = [
 
 	body("amountAvailable")
 		.optional()
-		.isInt()
+		.isInt({ min: 0 })
 		.withMessage("Amount available must be an integer"),
 
 	body("cost")
 		.optional()
-		.isInt()
-		.withMessage("Cost must be an integer")
-		.isIn(acceptedValues)
-		.withMessage("Invalid cost value"),
+		.isInt({ min: 5 })
+		.withMessage("Cost must be an integer and at least 5")
+		.custom((value) => {
+			return value % 5 === 0
+		})
+		.withMessage("Cost must be a multiple of 5"),
 
 	cookie("jwt")
 		.exists()
@@ -71,7 +82,7 @@ export const deleteProductValidation = [
 		.exists()
 		.withMessage("Product ID is required")
 		.toInt()
-		.isInt()
+		.isInt({ min: 0 })
 		.withMessage("Product ID must be an integer"),
 
 	cookie("jwt")
@@ -86,23 +97,14 @@ export const buyValidation = [
 		.exists()
 		.withMessage("Product ID is required")
 		.toInt()
-		.isInt()
+		.isInt({ min: 0 })
 		.withMessage("Product ID must be an integer"),
-
-	body("userId")
-		.exists()
-		.withMessage("User ID is required")
-		.toInt()
-		.isInt()
-		.withMessage("User ID must be an integer"),
 
 	body("amount")
 		.exists()
 		.withMessage("Amount is required")
-		.isInt()
-		.withMessage("Amount must be an integer")
-		.isIn(acceptedValues)
-		.withMessage("Invalid amount value"),
+		.isInt({ min: 1 })
+		.withMessage("Amount must be an integer"),
 
 	cookie("jwt")
 		.exists()

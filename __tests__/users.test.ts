@@ -1,6 +1,8 @@
 import request from "supertest"
 import { PrismaClient } from "@prisma/client"
-import app from "../server"
+import { createServer } from "../utils/createServer"
+
+const app = createServer()
 
 const randomBuyerUsername = `buyeruser${Math.floor(Math.random() * 1000)}`
 const randomSellerUsername = `selleruser${Math.floor(Math.random() * 1000)}`

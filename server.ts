@@ -1,35 +1,18 @@
-// TODO: tests
+// TODO: Refactor tests messages
 // TODO: fix error handling
-// TODO: make the product cost accept any value
+// TODO: Add reset endpoint and its validation and tests
 // TODO: add cors
 // TODO: add swagger
 // TODO: add interface for request body
 // TODO: use express json parser instead of body-parser
-import express, { Request, Response } from "express"
-import morgan from "morgan"
-import bodyParser from "body-parser"
-import cookieParser from "cookie-parser"
-import dotenv from "dotenv"
-import userRouter from "./routes/usersRouter"
-import productRouter from "./routes/productsRouter"
+import { createServer } from "./utils/createServer"
 
-dotenv.config()
+const app = createServer()
 
-const app = express()
 const port = process.env.PORT || 3000
 
-// Middlewares
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(cookieParser())
-app.use(morgan("common"))
-
-// Routes
-app.use("/users", userRouter)
-app.use("/products", productRouter)
-
-app.get("/", async (req: Request, res: Response) => {
-	res.json({ message: "Hello" })
+app.get("/", (req, res) => {
+	res.send("Hello World!")
 })
 
 app.listen(port, () => {

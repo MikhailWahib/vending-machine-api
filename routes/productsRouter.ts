@@ -1,5 +1,6 @@
 import { Router } from "express"
 import {
+	handleGetProduct,
 	handleGetAllProducts,
 	handleCreateProduct,
 	handleUpdateProduct,
@@ -10,6 +11,7 @@ import {
 	buyValidation,
 	createProductValidation,
 	deleteProductValidation,
+	getProductValidation,
 	updateProductValidation,
 } from "../validation/productsValidation"
 import { protect } from "../middlewares/protect"
@@ -23,10 +25,10 @@ router
 
 router
 	.route("/:id")
+	.get(getProductValidation, handleGetProduct)
 	.put(protect, updateProductValidation, handleUpdateProduct)
 	.delete(protect, deleteProductValidation, handleDeleteProduct)
 
-// router.get("/:id/buy", (req, res) => res.json({ msg: req.params.id }))
-router.post("/:id/buy", protect, buyValidation, handleBuy)
+router.post("/buy/:id", protect, buyValidation, handleBuy)
 
 export default router

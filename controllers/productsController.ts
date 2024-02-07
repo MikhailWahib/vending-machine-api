@@ -14,6 +14,31 @@ export const handleGetAllProducts = async (req: Request, res: Response) => {
 	}
 }
 
+export const handleGetProduct = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params
+
+		const productExists = await db.product.idExists(parseInt(id))
+
+		if (!productExists) {
+			return res.status(404).json({
+				message: "Product not found",
+			})
+		}
+
+		const product = await db.product.findUnique({
+			where: {
+				id: parseInt(id),
+			},
+		})
+
+		return res.status(200).json(product)
+	} catch (e) {
+		console.log(`Error getting product: ${e}`)
+		return res.status(500).json({ message: "Failed to get product" })
+	}
+}
+
 export const handleCreateProduct = async (req: Request, res: Response) => {
 	try {
 		const sellerId = req.userId
@@ -97,6 +122,24 @@ export const handleUpdateProduct = async (req: Request, res: Response) => {
 			})
 		}
 
+		// check if user is a seller
+		const userRole = await db.user.role(sellerId)
+
+		if (userRole !== "seller") {
+			return res.status(401).json({
+				message: "User is not a seller",
+			})
+		}
+
+		// check if the seller is the owner of the product
+		const isOwner = await db.product.isOwner(parseInt(id), sellerId)
+
+		if (!isOwner) {
+			return res.status(401).json({
+				message: "You are not the owner of this product",
+			})
+		}
+
 		// check if new product name already exists
 		if (productName) {
 			const newProductNameExists = await db.product.nameExists(productName)
@@ -116,7 +159,6 @@ export const handleUpdateProduct = async (req: Request, res: Response) => {
 				productName,
 				amountAvailable,
 				cost,
-				sellerId,
 			},
 		})
 
@@ -158,6 +200,15 @@ export const handleDeleteProduct = async (req: Request, res: Response) => {
 		if (!product) {
 			return res.status(404).json({
 				message: "Product not found",
+			})
+		}
+
+		// check if the seller is the owner of the product
+		const isOwner = await db.product.isOwner(parseInt(id), sellerId)
+
+		if (!isOwner) {
+			return res.status(401).json({
+				message: "You are not the owner of this product",
 			})
 		}
 
@@ -234,7 +285,7 @@ export const handleBuy = async (req: Request, res: Response) => {
 		// check if product is available
 		if (product.amountAvailable === 0) {
 			return res.status(400).json({
-				message: "Product is not available",
+				message: "Product is out of stock",
 			})
 		}
 

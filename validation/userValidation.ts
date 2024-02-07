@@ -88,8 +88,8 @@ export const deleteUserValidation = [
 
 export const depositValidation = [
 	body("deposit")
-		.isInt()
-		.withMessage("Deposit must be an integer")
+		.isInt({ min: 5 })
+		.withMessage("Deposit must be an integer and at least 5")
 		.isIn(acceptedValues)
 		.withMessage("Invalid deposit amount"),
 
