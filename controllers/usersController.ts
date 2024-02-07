@@ -72,7 +72,12 @@ export const handleGetCurrentUser = async (req: Request, res: Response) => {
 			},
 		})
 
-		return res.status(200).json(user)
+		return res.status(200).json({
+			id: user!.id,
+			username: user!.username,
+			role: user!.role,
+			deposit: user!.deposit,
+		})
 	} catch (e) {
 		console.error(`Error getting users: ${e}`)
 		return res.status(500).json({ message: "Failed to get users" })
@@ -116,7 +121,12 @@ export const handleCreateUser = async (req: Request, res: Response) => {
 
 		return res.status(201).json({
 			message: "User created successfully",
-			user,
+			user: {
+				id: user.id,
+				username: user.username,
+				role: user.role,
+				deposit: user.deposit,
+			},
 		})
 	} catch (e) {
 		console.error(`Error creating user: ${e}`)
@@ -211,7 +221,7 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
 
 		res.clearCookie("token")
 
-		return res.status(202).json({
+		return res.status(200).json({
 			message: "User deleted successfully",
 		})
 	} catch (e) {
@@ -236,9 +246,9 @@ export const handleDeposit = async (req: Request, res: Response) => {
 		// check if user is a seller
 		const role = await db.user.role(id)
 
-		if (role !== "seller") {
+		if (role !== "buyer") {
 			return res.status(401).json({
-				message: "User is not a seller",
+				message: "User is not a buyer",
 			})
 		}
 
@@ -252,7 +262,7 @@ export const handleDeposit = async (req: Request, res: Response) => {
 				},
 			},
 		})
-		return res.status(200).json({
+		return res.status(201).json({
 			message: `Deposited +${deposit} successfully`,
 			Balance: updatedUser.deposit,
 		})

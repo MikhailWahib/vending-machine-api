@@ -1,7 +1,9 @@
-// TODO: add interface for request body
-// TODO: fix error handling
-// TODO: add cors
 // TODO: tests
+// TODO: fix error handling
+// TODO: make the product cost accept any value
+// TODO: add cors
+// TODO: add swagger
+// TODO: add interface for request body
 // TODO: use express json parser instead of body-parser
 import express, { Request, Response } from "express"
 import morgan from "morgan"
@@ -33,3 +35,5 @@ app.get("/", async (req: Request, res: Response) => {
 app.listen(port, () => {
 	console.log(`Server started at http://localhost:${port}`)
 })
+
+export default app

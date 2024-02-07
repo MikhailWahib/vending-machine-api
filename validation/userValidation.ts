@@ -79,13 +79,6 @@ export const updateUserValidation = [
 ]
 
 export const deleteUserValidation = [
-	param("id")
-		.exists()
-		.withMessage("User ID is required")
-		.toInt()
-		.isInt()
-		.withMessage("User ID must be an integer"),
-
 	cookie("jwt")
 		.exists()
 		.withMessage("Invalid token")
@@ -94,13 +87,6 @@ export const deleteUserValidation = [
 ]
 
 export const depositValidation = [
-	param("id")
-		.exists()
-		.withMessage("User ID is required")
-		.toInt()
-		.isInt()
-		.withMessage("User ID must be an integer"),
-
 	body("deposit")
 		.isInt()
 		.withMessage("Deposit must be an integer")
