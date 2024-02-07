@@ -27,8 +27,8 @@ export const createServer = () => {
 	)
 
 	// Routes
-	app.use("/users", usersRouter)
-	app.use("/products", productsRouter)
+	app.use("/api/v1/users", usersRouter)
+	app.use("/api/v1/products", productsRouter)
 
 	return app
 }

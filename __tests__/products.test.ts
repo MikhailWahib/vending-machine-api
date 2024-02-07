@@ -15,13 +15,13 @@ beforeAll(async () => {
 	const prisma = new PrismaClient()
 	await prisma.$connect()
 
-	await request(app).post("/users").send({
+	await request(app).post("/api/v1/users").send({
 		username: randomUsername,
 		password: "testpassword",
 		role: "seller",
 	})
 
-	const loginResponse = await request(app).post("/users/auth").send({
+	const loginResponse = await request(app).post("/api/v1/users/auth").send({
 		username: randomUsername,
 		password: "testpassword",
 	})
@@ -38,7 +38,7 @@ afterAll(async () => {
 describe("POST /products", () => {
 	it("should create a new product", async () => {
 		const response = await request(app)
-			.post("/products")
+			.post("/api/v1/products")
 			.set("Cookie", sellerToken)
 			.send({
 				productName: randomProductName,
@@ -52,7 +52,7 @@ describe("POST /products", () => {
 
 	it("should not create a product with an invalid name", async () => {
 		const response = await request(app)
-			.post("/products")
+			.post("/api/v1/products")
 			.set("Cookie", sellerToken)
 			.send({
 				productName: "p",
@@ -65,7 +65,7 @@ describe("POST /products", () => {
 
 	it("should not create a product with an invalid cost", async () => {
 		const response = await request(app)
-			.post("/products")
+			.post("/api/v1/products")
 			.set("Cookie", sellerToken)
 			.send({
 				productName: randomProductName,
@@ -79,12 +79,12 @@ describe("POST /products", () => {
 
 describe("GET /products", () => {
 	it("should get all products without auth", async () => {
-		const response = await request(app).get("/products")
+		const response = await request(app).get("/api/v1/products")
 		expect(response.status).toBe(200)
 	})
 
 	it("should get all products", async () => {
-		const response = await request(app).get("/products")
+		const response = await request(app).get("/api/v1/products")
 		expect(response.status).toBe(200)
 		expect(response.body.length).toBeGreaterThan(0)
 	})
@@ -92,13 +92,13 @@ describe("GET /products", () => {
 
 describe("GET /products/:id", () => {
 	it("should get a product", async () => {
-		const response = await request(app).get(`/products/${productId}`)
+		const response = await request(app).get(`/api/v1/products/${productId}`)
 		expect(response.status).toBe(200)
 		expect(response.body.productName).toBe(randomProductName)
 	})
 
 	it("should not get a product that does not exist", async () => {
-		const response = await request(app).get(`/products/${productId}123`)
+		const response = await request(app).get(`/api/v1/products/${productId}123`)
 		expect(response.status).toBe(404)
 	})
 })
@@ -106,7 +106,7 @@ describe("GET /products/:id", () => {
 describe("PUT /products/:id", () => {
 	it("should update a product", async () => {
 		const response = await request(app)
-			.put(`/products/${productId}`)
+			.put(`/api/v1/products/${productId}`)
 			.set("Cookie", sellerToken)
 			.send({
 				productName: randomProductName + "123",
@@ -117,7 +117,7 @@ describe("PUT /products/:id", () => {
 
 	it("should not update a product that does not exist", async () => {
 		const response = await request(app)
-			.put(`/products/${productId}123`)
+			.put(`/api/v1/products/${productId}123`)
 			.set("Cookie", sellerToken)
 			.send({
 				productName: randomProductName + "1",
@@ -133,13 +133,13 @@ let newSellerId: number
 let newSellerToken: string
 describe("PUT /products/:id", () => {
 	it("should update the product owner", async () => {
-		await request(app).post("/users").send({
+		await request(app).post("/api/v1/users").send({
 			username: newSellerUsername,
 			password: "testpassword",
 			role: "seller",
 		})
 
-		const loginResponse = await request(app).post("/users/auth").send({
+		const loginResponse = await request(app).post("/api/v1/users/auth").send({
 			username: newSellerUsername,
 			password: "testpassword",
 		})
@@ -148,7 +148,7 @@ describe("PUT /products/:id", () => {
 		newSellerId = loginResponse.body.id
 
 		const response = await request(app)
-			.put(`/products/${productId}`)
+			.put(`/api/v1/products/${productId}`)
 			.set("Cookie", sellerToken)
 			.send({
 				sellerId: newSellerId,
@@ -158,7 +158,7 @@ describe("PUT /products/:id", () => {
 
 	it("should not update the product if the seller is not the owner", async () => {
 		const response = await request(app)
-			.put(`/products/${productId}`)
+			.put(`/api/v1/products/${productId}`)
 			.set("Cookie", newSellerToken)
 			.send({
 				productName: randomProductName + "11",
@@ -170,14 +170,14 @@ describe("PUT /products/:id", () => {
 describe("DELETE /products/:id", () => {
 	it("should not delete a product that does not exist", async () => {
 		const response = await request(app)
-			.delete(`/products/${productId}123`)
+			.delete(`/api/v1/products/${productId}123`)
 			.set("Cookie", sellerToken)
 		expect(response.status).toBe(404)
 	})
 
 	it("should not delete product if the seller is not the owner", async () => {
 		const response = await request(app)
-			.delete(`/products/${productId}`)
+			.delete(`/api/v1/products/${productId}`)
 			.set("Cookie", newSellerToken)
 		expect(response.status).toBe(401)
 	})
@@ -189,13 +189,13 @@ describe("POST /products/buy/:id", () => {
 
 	it("should buy a product", async () => {
 		//create a buyer user
-		await request(app).post("/users").send({
+		await request(app).post("/api/v1/users").send({
 			username: buyerUsername,
 			password: "testpassword",
 			role: "buyer",
 		})
 
-		const loginResponse = await request(app).post("/users/auth").send({
+		const loginResponse = await request(app).post("/api/v1/users/auth").send({
 			username: buyerUsername,
 			password: "testpassword",
 		})
@@ -203,12 +203,15 @@ describe("POST /products/buy/:id", () => {
 		buyerToken = loginResponse.headers["set-cookie"][0]
 
 		//deposit money
-		await request(app).put(`/users/deposit`).set("Cookie", buyerToken).send({
-			deposit: 100,
-		})
+		await request(app)
+			.put(`/api/v1/users/deposit`)
+			.set("Cookie", buyerToken)
+			.send({
+				deposit: 100,
+			})
 
 		const response = await request(app)
-			.post(`/products/buy/${productId}`)
+			.post(`/api/v1/products/buy/${productId}`)
 			.set("Cookie", buyerToken)
 			.send({
 				amount: 1,
@@ -218,7 +221,7 @@ describe("POST /products/buy/:id", () => {
 
 	it("should not buy a product that does not exist", async () => {
 		const response = await request(app)
-			.post(`/products/buy/${productId}123`)
+			.post(`/api/v1/products/buy/${productId}123`)
 			.set("Cookie", buyerToken)
 			.send({
 				amount: 1,
@@ -228,7 +231,7 @@ describe("POST /products/buy/:id", () => {
 
 	it("should not buy more than the available amount", async () => {
 		const response = await request(app)
-			.post(`/products/buy/${productId}`)
+			.post(`/api/v1/products/buy/${productId}`)
 			.set("Cookie", buyerToken)
 			.send({
 				amount: 11000,
@@ -238,7 +241,7 @@ describe("POST /products/buy/:id", () => {
 
 	it("should not buy less than 1", async () => {
 		const response = await request(app)
-			.post(`/products/buy/${productId}`)
+			.post(`/api/v1/products/buy/${productId}`)
 			.set("Cookie", buyerToken)
 			.send({
 				amount: 0,
@@ -248,7 +251,7 @@ describe("POST /products/buy/:id", () => {
 
 	it("should not buy if the user is not a buyer", async () => {
 		const response = await request(app)
-			.post(`/products/buy/${productId}`)
+			.post(`/api/v1/products/buy/${productId}`)
 			.set("Cookie", sellerToken)
 			.send({
 				amount: 1,
@@ -258,7 +261,7 @@ describe("POST /products/buy/:id", () => {
 
 	it("should not buy if the user is not logged in", async () => {
 		const response = await request(app)
-			.post(`/products/buy/${productId}`)
+			.post(`/api/v1/products/buy/${productId}`)
 			.send({
 				amount: 1,
 			})
@@ -267,7 +270,7 @@ describe("POST /products/buy/:id", () => {
 
 	it("should not buy if the user has insufficient funds", async () => {
 		const response = await request(app)
-			.post(`/products/buy/${productId}`)
+			.post(`/api/v1/products/buy/${productId}`)
 			.set("Cookie", buyerToken)
 			.send({
 				amount: 100,
@@ -278,14 +281,14 @@ describe("POST /products/buy/:id", () => {
 	it("should not buy if the product is out of stock", async () => {
 		// make the product out of stock
 		const updateResponse = await request(app)
-			.put(`/products/${productId}`)
+			.put(`/api/v1/products/${productId}`)
 			.set("Cookie", sellerToken)
 			.send({
 				amountAvailable: 0,
 			})
 
 		const response = await request(app)
-			.post(`/products/buy/${productId}`)
+			.post(`/api/v1/products/buy/${productId}`)
 			.set("Cookie", buyerToken)
 			.send({
 				amount: 1,
@@ -299,7 +302,7 @@ describe("POST /products/buy/:id", () => {
 describe("DELETE /products/:id", () => {
 	it("should delete a product", async () => {
 		const response = await request(app)
-			.delete(`/products/${productId}`)
+			.delete(`/api/v1/products/${productId}`)
 			.set("Cookie", sellerToken)
 		expect(response.status).toBe(200)
 	})

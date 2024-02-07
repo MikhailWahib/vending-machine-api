@@ -21,7 +21,7 @@ describe("POST /users", () => {
 	})
 
 	it("should create a new buyer user", async () => {
-		const response = await request(app).post("/users").send({
+		const response = await request(app).post("/api/v1/users").send({
 			username: randomBuyerUsername,
 			password: "testpassword",
 		})
@@ -30,7 +30,7 @@ describe("POST /users", () => {
 	})
 
 	it("should create a new seller user", async () => {
-		const response = await request(app).post("/users").send({
+		const response = await request(app).post("/api/v1/users").send({
 			username: randomSellerUsername,
 			password: "testpassword",
 			role: "seller",
@@ -40,7 +40,7 @@ describe("POST /users", () => {
 	})
 
 	it("should not create a user with an existing username", async () => {
-		const response = await request(app).post("/users").send({
+		const response = await request(app).post("/api/v1/users").send({
 			username: randomBuyerUsername,
 			password: "testpassword",
 		})
@@ -48,7 +48,7 @@ describe("POST /users", () => {
 	})
 
 	it("should not create a user with an invalid role", async () => {
-		const response = await request(app).post("/users").send({
+		const response = await request(app).post("/api/v1/users").send({
 			username: randomSellerUsername,
 			password: "testpassword",
 			role: "invalid",
@@ -57,7 +57,7 @@ describe("POST /users", () => {
 	})
 
 	it("should not create a user with an invalid password", async () => {
-		const response = await request(app).post("/users").send({
+		const response = await request(app).post("/api/v1/users").send({
 			username: randomSellerUsername,
 			password: "short",
 			role: "seller",
@@ -66,7 +66,7 @@ describe("POST /users", () => {
 	})
 
 	it("should not create a user with an invalid username", async () => {
-		const response = await request(app).post("/users").send({
+		const response = await request(app).post("/api/v1/users").send({
 			username: "sc",
 			password: "testpassword",
 			role: "seller",
@@ -77,7 +77,7 @@ describe("POST /users", () => {
 
 describe("POST /users/auth", () => {
 	it("should authenticate a user", async () => {
-		const response = await request(app).post("/users/auth").send({
+		const response = await request(app).post("/api/v1/users/auth").send({
 			username: randomBuyerUsername,
 			password: "testpassword",
 		})
@@ -89,7 +89,7 @@ describe("POST /users/auth", () => {
 	})
 
 	it("should not authenticate a user with an invalid password", async () => {
-		const response = await request(app).post("/users/auth").send({
+		const response = await request(app).post("/api/v1/users/auth").send({
 			username: randomBuyerUsername,
 			password: "wrongpassword",
 		})
@@ -97,7 +97,7 @@ describe("POST /users/auth", () => {
 	})
 
 	it("should not authenticate a user with an invalid username", async () => {
-		const response = await request(app).post("/users/auth").send({
+		const response = await request(app).post("/api/v1/users/auth").send({
 			username: "wronguser",
 			password: "testpassword",
 		})
@@ -108,7 +108,7 @@ describe("POST /users/auth", () => {
 describe("PUT /users/deposit", () => {
 	it("should deposit to a user's account", async () => {
 		const response = await request(app)
-			.put("/users/deposit")
+			.put("/api/v1/users/deposit")
 			.set("Cookie", token)
 			.send({
 				deposit: 10,
@@ -118,7 +118,7 @@ describe("PUT /users/deposit", () => {
 
 	it("should not deposit to a user's account with an invalid deposit", async () => {
 		const response = await request(app)
-			.put("/users/deposit")
+			.put("/api/v1/users/deposit")
 			.set("Cookie", token)
 			.send({
 				deposit: 12,
@@ -130,7 +130,7 @@ describe("PUT /users/deposit", () => {
 describe("PUT /users", () => {
 	it("should update a user's username", async () => {
 		const response = await request(app)
-			.put("/users")
+			.put("/api/v1/users")
 			.set("Cookie", token)
 			.send({
 				username: randomBuyerUsername + "1",
@@ -141,7 +141,7 @@ describe("PUT /users", () => {
 
 	it("should update user's password", async () => {
 		const response = await request(app)
-			.put("/users")
+			.put("/api/v1/users")
 			.set("Cookie", token)
 			.send({
 				password: "newpassword1",
@@ -152,7 +152,7 @@ describe("PUT /users", () => {
 
 	it("should update a user's role", async () => {
 		const response = await request(app)
-			.put("/users")
+			.put("/api/v1/users")
 			.set("Cookie", token)
 			.send({
 				role: "seller",
@@ -165,7 +165,7 @@ describe("PUT /users", () => {
 describe("POST /users/auth", () => {
 	it("should authenticate after updating a user", async () => {
 		const response = await request(app)
-			.post("/users/auth")
+			.post("/api/v1/users/auth")
 			.send({
 				username: randomBuyerUsername + "1",
 				password: "newpassword1",
@@ -179,7 +179,7 @@ describe("POST /users/auth", () => {
 describe("PUT /users/deposit", () => {
 	it("should not deposit to a user's account after updating a user's role to seller", async () => {
 		const response = await request(app)
-			.put("/users/deposit")
+			.put("/api/v1/users/deposit")
 			.set("Cookie", token)
 			.send({
 				deposit: 10,
@@ -191,7 +191,7 @@ describe("PUT /users/deposit", () => {
 describe("POST /users/logout", () => {
 	it("should logout a user", async () => {
 		const response = await request(app)
-			.post("/users/logout")
+			.post("/api/v1/users/logout")
 			.set("Cookie", token)
 		expect(response.status).toBe(200)
 	})
@@ -199,14 +199,16 @@ describe("POST /users/logout", () => {
 
 describe("DELETE /users", () => {
 	it("should delete a user", async () => {
-		const response = await request(app).delete("/users").set("Cookie", token)
+		const response = await request(app)
+			.delete("/api/v1/users")
+			.set("Cookie", token)
 		expect(response.status).toBe(200)
 	})
 })
 
 describe("POST /users/auth", () => {
 	it("should not authenticate after deleting a user", async () => {
-		const response = await request(app).post("/users/auth").send({
+		const response = await request(app).post("/api/v1/users/auth").send({
 			username: "buyeruser1",
 			password: "newpassword",
 		})
