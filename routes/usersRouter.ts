@@ -27,8 +27,8 @@ router.post("/logout", handleLogout)
 
 router
 	.route("/:id")
-	.put(protect, updateUserValidation, updateUserValidation, handleUpdateUser)
-	.delete(protect, deleteUserValidation, deleteUserValidation, handleDeleteUser)
+	.put(protect, updateUserValidation, handleUpdateUser)
+	.delete(protect, deleteUserValidation, handleDeleteUser)
 
 router.get("/current", protect, handleGetCurrentUser)
 

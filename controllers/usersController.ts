@@ -133,7 +133,7 @@ export const handleCreateUser = async (req: Request, res: Response) => {
 
 export const handleUpdateUser = async (req: Request, res: Response) => {
 	try {
-		const id = req.userId
+		const { id } = req.params
 		const { username, password, role } = req.body
 
 		const result: Result = validationResult(req)
@@ -141,6 +141,12 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 		if (result.array().length > 0) {
 			return res.status(400).json({
 				errors: result.array(),
+			})
+		}
+
+		if (parseInt(id) !== req.userId) {
+			return res.status(401).json({
+				message: "Unauthorized",
 			})
 		}
 
@@ -166,7 +172,7 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 
 		const user = await db.user.update({
 			where: {
-				id,
+				id: parseInt(id),
 			},
 			data: {
 				username,
@@ -177,7 +183,12 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 
 		return res.status(201).json({
 			message: "User updated successfully",
-			user,
+			user: {
+				id: user.id,
+				username: user.username,
+				deposit: user.deposit,
+				role: user.role,
+			},
 		})
 	} catch (e) {
 		console.error(`Error updating user: ${e}`)
@@ -186,7 +197,7 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 
 export const handleDeleteUser = async (req: Request, res: Response) => {
 	try {
-		const id = req.userId
+		const { id } = req.params
 
 		const result: Result = validationResult(req)
 
@@ -196,12 +207,14 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
 			})
 		}
 
-		// check if username exists
-		const user = await db.user.findUnique({
-			where: {
-				id,
-			},
-		})
+		if (parseInt(id) !== req.userId) {
+			return res.status(401).json({
+				message: "Unauthorized",
+			})
+		}
+
+		// check if user exists
+		const user = await db.user.exists(parseInt(id))
 
 		if (!user) {
 			return res.status(404).json({
@@ -211,7 +224,7 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
 
 		await db.user.delete({
 			where: {
-				id,
+				id: parseInt(id),
 			},
 		})
 
