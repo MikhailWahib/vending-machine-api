@@ -24,6 +24,6 @@ model Product {
   amountAvailable Int
   cost            Int
   productName     String @unique
-  seller          User   @relation(fields: [sellerId], references: [id])
+  seller          User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   sellerId        Int
 }
