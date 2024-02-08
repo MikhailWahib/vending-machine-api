@@ -20,25 +20,13 @@ response:
 
 ```json
 {
-	"id": "string",
-	"username": "string",
-	"role": "string",
-	"deposit": number
-}
-```
-
-- ### GET /api/v1/users/current
-
-gets current user
-
-response:
-
-```json
-{
-	"id": "string",
-	"username": "string",
-	"role": "string",
-	"deposit": number
+	"message": "string",
+	"user": {
+		"id": "string",
+		"username": "string",
+		"role": "string",
+		"deposit": number
+	}
 }
 ```
 
@@ -66,6 +54,21 @@ response:
 }
 
 // jwt token sent in cookie
+```
+
+- ### GET /api/v1/users/current
+
+gets current user
+
+response:
+
+```json
+{
+	"id": "string",
+	"username": "string",
+	"role": "string",
+	"deposit": number
+}
 ```
 
 - ### POST /api/v1/users/logout
