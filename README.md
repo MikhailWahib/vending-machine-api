@@ -61,8 +61,9 @@ Start server
 npm run start
 ```
 
+## Tests
 Run tests
 
 ```bash
-npm run test
+npm test
 ```
