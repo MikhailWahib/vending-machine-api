@@ -150,6 +150,14 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 			})
 		}
 
+		const userExists = await db.user.exists(parseInt(id))
+
+		if (!userExists) {
+			return res.status(404).json({
+				message: "User not found",
+			})
+		}
+
 		// check if new username already exists
 		if (username) {
 			const newUsernameExists = await db.user.findUnique({
@@ -254,6 +262,15 @@ export const handleDeposit = async (req: Request, res: Response) => {
 		if (parseInt(id) !== req.userId) {
 			return res.status(401).json({
 				message: "Unauthorized",
+			})
+		}
+
+		// check if user exists
+		const user = await db.user.exists(parseInt(id))
+
+		if (!user) {
+			return res.status(404).json({
+				message: "User not found",
 			})
 		}
 
