@@ -185,7 +185,7 @@ body:
 ```json
 {
     "productName": "string",
-    "cost": "number",
+    "cost": "number", // cost should be a multiple of 5
     "amountAvailable": "number",
 }
 ```
@@ -198,7 +198,7 @@ response:
     "product": {
         "id": "string",
         "productName": "string",
-        "cost": number,
+        "cost": "number",
         "amountAvailable": "number",
         "sellerId": "number"
     }
@@ -285,9 +285,17 @@ response:
 	"product": {
 		"id": "string",
 		"productName": "string",
-		"cost": number,
+		"cost": "number",
 		"amountAvailable": "number",
 		"sellerId": "number"
-	}
+	},
+	// return user change in coins
+	"change": [
+		"5": "number"
+		"10": "number"
+		"20": "number"
+		"50": "number"
+		"100": "number"
+	]
 }
 ```
