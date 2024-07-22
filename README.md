@@ -8,7 +8,7 @@ For Documentation go to https://github.com/MikhailWahib/vending-machine-api/blob
 
 ## Install
 
-make sure you have `node`, `npm` and `sqlite3` installed.
+make sure you have `node`, `pnpm` or `npm`, and `sqlite3` installed.
 
 Clone the repository
 
@@ -25,18 +25,18 @@ cd vending-machine-api
 Install dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
 ## Environment Setup
 
-- go to `.env.example` and fill it
-- rename `.env.example` to `.env`
+- create `.env` file
+- copy `.env.example` content to `.env` and fill the required vars
 
 ## Database Setup
 
 ```bash
-npx prisma migrate dev --name init
+pnpx prisma migrate dev --name init
 ```
 
 ## Run
@@ -44,7 +44,7 @@ npx prisma migrate dev --name init
 Run dev server
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 ## Build
@@ -52,11 +52,11 @@ npm run dev
 Build
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 Start server
 
 ```bash
-npm run start
+pnpm run start
 ```
