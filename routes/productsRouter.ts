@@ -1,34 +1,34 @@
-import { Router } from "express"
+import { Router } from 'express'
 import {
-	handleGetProduct,
-	handleGetAllProducts,
-	handleCreateProduct,
-	handleUpdateProduct,
-	handleDeleteProduct,
-	handleBuy,
-} from "../controllers/productsController"
+  handleGetProduct,
+  handleGetAllProducts,
+  handleCreateProduct,
+  handleUpdateProduct,
+  handleDeleteProduct,
+  handleBuy,
+} from '../controllers/products/productsController'
 import {
-	buyValidation,
-	createProductValidation,
-	deleteProductValidation,
-	getProductValidation,
-	updateProductValidation,
-} from "../validation/productsValidation"
-import { protect } from "../middlewares/protect"
+  buyValidation,
+  createProductValidation,
+  deleteProductValidation,
+  getProductValidation,
+  updateProductValidation,
+} from '../validation/productsValidation'
+import { protect } from '../middlewares/protect'
 
 const router = Router()
 
 router
-	.route("/")
-	.get(handleGetAllProducts)
-	.post(protect, createProductValidation, handleCreateProduct)
+  .route('/')
+  .get(handleGetAllProducts)
+  .post(protect, createProductValidation, handleCreateProduct)
 
 router
-	.route("/:id")
-	.get(getProductValidation, handleGetProduct)
-	.put(protect, updateProductValidation, handleUpdateProduct)
-	.delete(protect, deleteProductValidation, handleDeleteProduct)
+  .route('/:id')
+  .get(getProductValidation, handleGetProduct)
+  .put(protect, updateProductValidation, handleUpdateProduct)
+  .delete(protect, deleteProductValidation, handleDeleteProduct)
 
-router.post("/:id/buy", protect, buyValidation, handleBuy)
+router.post('/:id/buy', protect, buyValidation, handleBuy)
 
 export default router

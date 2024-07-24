@@ -1,39 +1,42 @@
-import { Router } from "express"
+import { Router } from 'express'
 import {
-	handleGetCurrentUser,
-	handleCreateUser,
-	handleUpdateUser,
-	handleDeleteUser,
-	handleDeposit,
-	handleAuthUser,
-	handleLogout,
-	handleReset,
-} from "../controllers/usersController"
+  handleGetCurrentUser,
+  handleCreateUser,
+  handleUpdateUser,
+  handleDeleteUser,
+  handleDeposit,
+  handleAuthUser,
+  handleLogout,
+  handleReset,
+} from '../controllers/users/usersController'
 import {
-	authUserValidation,
-	createUserValidation,
-	deleteUserValidation,
-	depositValidation,
-	updateUserValidation,
-} from "../validation/userValidation"
-import { protect } from "../middlewares/protect"
+  authUserValidation,
+  createUserValidation,
+  deleteUserValidation,
+  depositValidation,
+  updateUserValidation,
+} from '../validation/userValidation'
+import { protect } from '../middlewares/protect'
+import { validate } from '../middlewares/validate'
 
 const router = Router()
 
-router.post("/", createUserValidation, handleCreateUser)
+router.use(validate)
 
-router.post("/auth", authUserValidation, handleAuthUser)
-router.post("/logout", handleLogout)
+// The routes that don't require authentication
+router.post('/', createUserValidation, validate, handleCreateUser)
+router.post('/auth', authUserValidation, validate, handleAuthUser)
+router.post('/logout', handleLogout)
 
+// The routes that require authentication
 router
-	.route("/:id")
-	.put(protect, updateUserValidation, handleUpdateUser)
-	.delete(protect, deleteUserValidation, handleDeleteUser)
+  .route('/:id')
+  .put(protect, updateUserValidation, validate, handleUpdateUser)
+  .delete(protect, deleteUserValidation, validate, handleDeleteUser)
 
-router.get("/current", protect, handleGetCurrentUser)
+router.get('/current', protect, handleGetCurrentUser)
 
-router.put("/:id/deposit", protect, depositValidation, handleDeposit)
-
-router.put("/:id/reset", protect, handleReset)
+router.put('/:id/deposit', protect, depositValidation, validate, handleDeposit)
+router.put('/:id/reset', protect, handleReset)
 
 export default router
