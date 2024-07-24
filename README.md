@@ -60,3 +60,16 @@ Start server
 ```bash
 pnpm run start
 ```
+
+## Testing
+
+### Setup
+
+- create `.env.test` file
+- copy `.env.test.example` content to `.env.test` and fill the required vars
+
+### Run tests
+
+```bash
+pnpm test
+```
