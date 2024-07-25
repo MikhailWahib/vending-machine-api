@@ -39,7 +39,8 @@ export const handleGetProduct = async (req: Request, res: Response) => {
 export const handleCreateProduct = async (req: Request, res: Response) => {
   try {
     const sellerId = req.userId
-    if (!sellerId) return
+    if (!sellerId)
+      return handleError(res, 400, 'Invalid request: No user ID provided')
 
     const { productName, amountAvailable, cost } = req.body
 
@@ -74,7 +75,7 @@ export const handleUpdateProduct = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
     const sellerId = req.userId
-    if (!sellerId || id) return
+    if (!sellerId || !id) return handleError(res, 400, 'Invalid request')
 
     const { productName, amountAvailable, cost } = req.body
 
@@ -118,7 +119,7 @@ export const handleDeleteProduct = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
     const sellerId = req.userId
-    if (!sellerId || id) return
+    if (!sellerId || !id) return handleError(res, 400, 'Invalid request')
 
     const isSeller = await checkUserRole(sellerId, 'seller')
     if (!isSeller) {
@@ -148,7 +149,7 @@ export const handleBuy = async (req: Request, res: Response) => {
     const { id } = req.params
     const { amount } = req.body
     const userId = req.userId
-    if (!userId || id) return
+    if (!userId || !id) return handleError(res, 400, 'Invalid request')
 
     const isBuyer = await checkUserRole(userId, 'buyer')
     if (!isBuyer) {
@@ -156,7 +157,7 @@ export const handleBuy = async (req: Request, res: Response) => {
     }
 
     const [product, user] = await Promise.all([
-      findProduct(parseInt(id)),
+      findProduct(id),
       findUser(userId),
     ])
 
