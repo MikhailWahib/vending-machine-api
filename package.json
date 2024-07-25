@@ -7,7 +7,7 @@
     "build": "npx tsc",
     "start": "node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only server.ts",
-    "test": "dotenv -e .env.test -- pnpx prisma migrate dev --name init && jest"
+    "test": "dotenv -e .env.test -- pnpx prisma db push && jest"
   },
   "keywords": [],
   "author": "",

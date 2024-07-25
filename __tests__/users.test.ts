@@ -5,35 +5,16 @@ import { signToken } from '../utils/signToken'
 
 const app = createServer()
 
-// jest.mock('../utils/signToken', () => ({
-//   signToken: jest.fn(),
-// }))
-
 beforeAll(async () => {
-  await db.user.deleteMany()
   await db.$connect()
+  await db.user.deleteMany()
 })
 
 afterAll(async () => {
+  // await db.user.deleteMany()
   await db.$disconnect()
 })
 
-// beforeEach(async () => {
-//   // Create a test user
-//   const testUser = await db.user.create({
-//     data: {
-//       username: 'testuser',
-//       password: await db.user.hashPassword('testpassword'),
-//       role: 'buyer',
-//       deposit: 0,
-//     },
-//   })
-//   testUserId = testUser.id.toString()
-//   authToken = 'fake-jwt-token'
-//   ;(signToken as jest.Mock).mockImplementation((userId, res) => {
-//     res.cookie('jwt', authToken)
-//   })
-// })
 describe('User API', () => {
   const randomBuyerUsername = `buyeruser${Math.floor(Math.random() * 1000)}`
   const randomSellerUsername = `selleruser${Math.floor(Math.random() * 1000)}`
@@ -135,7 +116,7 @@ describe('User API', () => {
         .put(`/api/v1/users/${buyerId}/deposit`)
         .set('Cookie', token)
         .send({
-          deposit: 10,
+          amount: 10,
         })
       expect(response.status).toBe(200)
     })
@@ -145,7 +126,7 @@ describe('User API', () => {
         .put(`/api/v1/users/${buyerId}/deposit`)
         .set('Cookie', token)
         .send({
-          deposit: 12,
+          amount: 12,
         })
       expect(response.status).toBe(400)
     })
@@ -208,7 +189,7 @@ describe('User API', () => {
         .put(`/api/v1/users/${buyerId}/deposit`)
         .set('Cookie', token)
         .send({
-          deposit: 10,
+          amount: 10,
         })
       expect(response.status).toBe(401)
     })

@@ -134,7 +134,7 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
 export const handleDeposit = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    const { deposit } = req.body
+    const { amount } = req.body
 
     const user = await findUser(parseInt(id))
     if (!user) {
@@ -148,11 +148,11 @@ export const handleDeposit = async (req: Request, res: Response) => {
 
     const updatedUser = await db.user.update({
       where: { id: parseInt(id) },
-      data: { deposit: { increment: deposit } },
+      data: { deposit: { increment: amount } },
     })
 
     return res.status(200).json({
-      message: `Deposited +${deposit} successfully`,
+      message: `Deposited +${amount} successfully`,
       Balance: updatedUser.deposit,
     })
   } catch (e) {

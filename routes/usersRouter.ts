@@ -21,8 +21,6 @@ import { validate } from '../middlewares/validate'
 
 const router = Router()
 
-router.use(validate)
-
 // The routes that don't require authentication
 router.post('/', createUserValidation, validate, handleCreateUser)
 router.post('/auth', authUserValidation, validate, handleAuthUser)
