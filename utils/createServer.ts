@@ -1,4 +1,3 @@
-import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import express from 'express'
 import morgan from 'morgan'
