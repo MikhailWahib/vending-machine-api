@@ -33,6 +33,10 @@ pnpm install
 - create `.env` file
 - copy `.env.example` content to `.env` and fill the required vars
 
+```bash
+cp .env.example .env
+```
+
 ## Database Setup
 
 ```bash
@@ -67,6 +71,10 @@ pnpm run start
 
 - create `.env.test` file
 - copy `.env.test.example` content to `.env.test` and fill the required vars
+
+```bash
+cp .env.test.example .env.test
+```
 
 ### Run tests
 
