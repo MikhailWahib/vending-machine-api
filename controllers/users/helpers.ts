@@ -21,6 +21,8 @@ export const formatUserResponse = (user: any) => {
 }
 
 export const checkUserRole = async (userId: number, role: string) => {
-  const userRole = await db.user.role(userId)
-  return userRole === role
+  const user = await db.user.findUnique({ where: { id: userId } })
+  if (!user) return false
+
+  return user.role === role
 }

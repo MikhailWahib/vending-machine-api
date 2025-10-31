@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { db } from '../../prisma/client'
-import { signToken } from '../../utils/signToken'
+import { signToken, comparePassword, hashPassword } from '../../utils/auth'
 import { handleError } from '../helpers'
 import {
   findUser,
@@ -18,7 +18,7 @@ export const handleAuthUser = async (req: Request, res: Response) => {
       return handleError(res, 404, 'User not found')
     }
 
-    const isPasswordValid = await db.user.comparePassword(
+    const isPasswordValid = await comparePassword(
       password,
       user.password
     )
@@ -63,7 +63,7 @@ export const handleCreateUser = async (req: Request, res: Response) => {
       return handleError(res, 400, 'Username already exists')
     }
 
-    const hashedPassword = await db.user.hashPassword(password)
+    const hashedPassword = await hashPassword(password)
     const user = await db.user.create({
       data: { username, password: hashedPassword, role },
     })
@@ -96,7 +96,7 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 
     let hashedPassword: string | undefined
     if (password) {
-      hashedPassword = await db.user.hashPassword(password)
+      hashedPassword = await hashPassword(password)
     }
 
     const user = await db.user.update({

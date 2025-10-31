@@ -1,5 +1,6 @@
 import { Response } from "express"
 import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
 
 export const signToken = (id: number, res: Response) => {
 	const { NODE_ENV, JWT_SECRET } = process.env
@@ -19,3 +20,14 @@ export const signToken = (id: number, res: Response) => {
 		maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
 	})
 }
+
+export const hashPassword = async (password: string) => {
+	const salt = await bcrypt.genSalt(10)
+	return await bcrypt.hash(password, salt)
+}
+
+export const comparePassword = async (password: string, hash: string) => {
+	return await bcrypt.compare(password, hash)
+}
+
+

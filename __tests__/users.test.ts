@@ -1,7 +1,7 @@
 import request from 'supertest'
 import { createServer } from '../utils/createServer'
 import { db } from '../prisma/client'
-import { signToken } from '../utils/signToken'
+import { signToken } from '../utils/auth'
 
 const app = createServer()
 
