@@ -40,7 +40,9 @@ cp .env.example .env
 ## Database Setup
 
 ```bash
-pnpx prisma migrate dev --name init
+pnpx prisma migrate deploy
+pnpx prisma generate
+
 ```
 
 ## Run
