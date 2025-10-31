@@ -32,6 +32,11 @@ describe('Product API', () => {
       .send({ username: 'buyer1', password: 'password' })
     buyerToken = buyerLoginResponse.headers['set-cookie'][0]
 
+    // Create a second seller used in some tests (ensure it exists regardless of test order)
+    await request(app)
+      .post('/api/v1/users')
+      .send({ username: 'seller2', password: 'password', role: 'seller' })
+
     // Add deposit for buyer
     const res = await request(app)
       .put(`/api/v1/users/${buyerResponse.body.user.id}/deposit`)
@@ -117,10 +122,6 @@ describe('Product API', () => {
     })
 
     it('should not allow non-owners to update a product', async () => {
-      // Create another seller
-      await request(app)
-        .post('/api/v1/users')
-        .send({ username: 'seller2', password: 'password', role: 'seller' })
       const seller2LoginResponse = await request(app)
         .post('/api/v1/users/auth')
         .send({ username: 'seller2', password: 'password' })

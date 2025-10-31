@@ -20,18 +20,6 @@ export const validateInput = (
   next()
 }
 
-// export const checkAuthorization = (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   const { id } = req.params
-//   if (parseInt(id) !== req.userId) {
-//     return res.status(401).json({ message: 'Unauthorized' })
-//   }
-//   next()
-// }
-
 // Transaction helper
 export const performTransaction = async (updates: any[]) => {
   return await db.$transaction(updates)

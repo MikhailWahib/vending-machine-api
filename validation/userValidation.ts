@@ -9,6 +9,12 @@ export const authUserValidation = [
     .isLength({ min: 4, max: 20 })
     .withMessage('Username must be between 4 and 20 characters')
     .toLowerCase(),
+
+  body('password')
+    .exists()
+    .withMessage('Password is required')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long'),
 ]
 
 export const createUserValidation = [

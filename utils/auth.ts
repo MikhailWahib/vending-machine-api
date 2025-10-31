@@ -5,7 +5,7 @@ import bcrypt from "bcrypt"
 export const signToken = (id: number, res: Response) => {
 	const { NODE_ENV, JWT_SECRET } = process.env
 
-	if (!process.env.JWT_SECRET) {
+	if (!JWT_SECRET) {
 		throw new Error("JWT secret is not defined.")
 	}
 

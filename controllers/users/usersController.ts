@@ -80,6 +80,11 @@ export const handleCreateUser = async (req: Request, res: Response) => {
 export const handleUpdateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
+    const userIdParam = parseInt(id)
+
+    if (!req.userId || req.userId !== userIdParam) {
+      return handleError(res, 401, 'Unauthorized')
+    }
     const { username, password, role } = req.body
 
     const userExists = await checkUserExists(parseInt(id))
@@ -116,6 +121,11 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
 export const handleDeleteUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
+    const userIdParam = parseInt(id)
+
+    if (!req.userId || req.userId !== userIdParam) {
+      return handleError(res, 401, 'Unauthorized')
+    }
 
     const userExists = await checkUserExists(parseInt(id))
     if (!userExists) {
@@ -123,7 +133,7 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
     }
 
     await db.user.delete({ where: { id: parseInt(id) } })
-    res.clearCookie('token')
+    res.clearCookie('jwt')
 
     return res.status(200).json({ message: 'User deleted successfully' })
   } catch (e) {
@@ -135,6 +145,11 @@ export const handleDeposit = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
     const { amount } = req.body
+    const userIdParam = parseInt(id)
+
+    if (!req.userId || req.userId !== userIdParam) {
+      return handleError(res, 401, 'Unauthorized')
+    }
 
     const user = await findUser(parseInt(id))
     if (!user) {
@@ -163,6 +178,11 @@ export const handleDeposit = async (req: Request, res: Response) => {
 export const handleReset = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
+    const userIdParam = parseInt(id)
+
+    if (!req.userId || req.userId !== userIdParam) {
+      return handleError(res, 401, 'Unauthorized')
+    }
 
     const user = await findUser(parseInt(id))
     if (!user) {

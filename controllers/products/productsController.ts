@@ -156,8 +156,10 @@ export const handleBuy = async (req: Request, res: Response) => {
       return handleError(res, 401, 'User is not a buyer')
     }
 
+    const productId = parseInt(id)
+
     const [product, user] = await Promise.all([
-      findProduct(id),
+      findProduct(productId),
       findUser(userId),
     ])
 
@@ -176,7 +178,7 @@ export const handleBuy = async (req: Request, res: Response) => {
       return handleError(res, 400, 'Requested amount is not available')
     }
 
-    const [updatedProduct, updatedUser] = await performTransaction([
+    const [updatedProduct, _] = await performTransaction([
       db.product.update({
         where: { id: parseInt(id) },
         data: { amountAvailable: { decrement: amount } },

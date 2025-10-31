@@ -12,6 +12,11 @@ declare global {
 export const protect = (req: Request, res: Response, next: NextFunction) => {
 	const { JWT_SECRET } = process.env
 
+	if (!JWT_SECRET) {
+		console.error('JWT_SECRET is not defined')
+		return res.status(500).json({ message: 'Server misconfiguration' })
+	}
+
 	try {
 		const token = req.cookies.jwt
 
