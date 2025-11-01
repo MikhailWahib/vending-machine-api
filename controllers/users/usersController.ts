@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { db } from '../../prisma/client'
 import { signToken, comparePassword, hashPassword } from '../../utils/auth'
-import { handleError } from '../helpers'
 import {
   findUser,
   checkUserExists,
@@ -9,13 +8,27 @@ import {
   checkUserRole,
 } from './helpers'
 
+const sendError = (
+  res: Response,
+  status: number,
+  message: string,
+  err?: unknown,
+  meta?: Record<string, unknown>
+) => {
+  console.error(`[usersController] ${message}`, { err, ...meta })
+  return res.status(status).json({ message })
+}
+
 export const handleAuthUser = async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body
     const user = await findUser(username)
 
     if (!user) {
-      return handleError(res, 404, 'User not found')
+      return sendError(res, 404, 'User not found', undefined, {
+        action: 'handleAuthUser',
+        username,
+      })
     }
 
     const isPasswordValid = await comparePassword(
@@ -23,13 +36,18 @@ export const handleAuthUser = async (req: Request, res: Response) => {
       user.password
     )
     if (!isPasswordValid) {
-      return handleError(res, 401, 'Invalid password')
+      return sendError(res, 401, 'Invalid password', undefined, {
+        action: 'handleAuthUser',
+        username,
+      })
     }
 
     signToken(user.id, res)
     return res.status(200).json(formatUserResponse(user))
   } catch (e) {
-    return handleError(res, 500, `Error authenticating user: ${e}`)
+    return sendError(res, 500, 'Internal server error', e, {
+      action: 'handleAuthUser',
+    })
   }
 }
 
@@ -38,7 +56,9 @@ export const handleLogout = async (req: Request, res: Response) => {
     res.clearCookie('jwt')
     return res.status(200).json({ message: 'Logged out successfully' })
   } catch (e) {
-    return handleError(res, 500, `Error logging out: ${e}`)
+    return sendError(res, 500, 'Internal server error', e, {
+      action: 'handleLogout',
+    })
   }
 }
 
@@ -46,11 +66,16 @@ export const handleGetCurrentUser = async (req: Request, res: Response) => {
   try {
     const user = await findUser(req.userId!)
     if (!user) {
-      return handleError(res, 404, 'User not found')
+      return sendError(res, 404, 'User not found', undefined, {
+        action: 'handleGetCurrentUser',
+        userId: req.userId,
+      })
     }
     return res.status(200).json(formatUserResponse(user))
   } catch (e) {
-    return handleError(res, 500, `Error getting user: ${e}`)
+    return sendError(res, 500, 'Internal server error', e, {
+      action: 'handleGetCurrentUser',
+    })
   }
 }
 
@@ -60,7 +85,10 @@ export const handleCreateUser = async (req: Request, res: Response) => {
 
     const userExists = await findUser(username)
     if (userExists) {
-      return handleError(res, 400, 'Username already exists')
+      return sendError(res, 400, 'Username already exists', undefined, {
+        action: 'handleCreateUser',
+        username,
+      })
     }
 
     const hashedPassword = await hashPassword(password)
@@ -73,7 +101,9 @@ export const handleCreateUser = async (req: Request, res: Response) => {
       user: formatUserResponse(user),
     })
   } catch (e) {
-    return handleError(res, 500, `Error creating user: ${e}`)
+    return sendError(res, 500, 'Internal server error', e, {
+      action: 'handleCreateUser',
+    })
   }
 }
 
@@ -83,19 +113,28 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
     const userIdParam = parseInt(id)
 
     if (!req.userId || req.userId !== userIdParam) {
-      return handleError(res, 401, 'Unauthorized')
+      return sendError(res, 401, 'Unauthorized', undefined, {
+        action: 'handleUpdateUser',
+        userIdParam,
+      })
     }
     const { username, password, role } = req.body
 
     const userExists = await checkUserExists(parseInt(id))
     if (!userExists) {
-      return handleError(res, 404, 'User not found')
+      return sendError(res, 404, 'User not found', undefined, {
+        action: 'handleUpdateUser',
+        userIdParam,
+      })
     }
 
     if (username) {
       const newUsernameExists = await findUser(username)
       if (newUsernameExists) {
-        return handleError(res, 400, 'Username already exists')
+        return sendError(res, 400, 'Username already exists', undefined, {
+          action: 'handleUpdateUser',
+          username,
+        })
       }
     }
 
@@ -114,7 +153,9 @@ export const handleUpdateUser = async (req: Request, res: Response) => {
       user: formatUserResponse(user),
     })
   } catch (e) {
-    return handleError(res, 500, `Error updating user: ${e}`)
+    return sendError(res, 500, 'Internal server error', e, {
+      action: 'handleUpdateUser',
+    })
   }
 }
 
@@ -124,12 +165,18 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
     const userIdParam = parseInt(id)
 
     if (!req.userId || req.userId !== userIdParam) {
-      return handleError(res, 401, 'Unauthorized')
+      return sendError(res, 401, 'Unauthorized', undefined, {
+        action: 'handleDeleteUser',
+        userIdParam,
+      })
     }
 
     const userExists = await checkUserExists(parseInt(id))
     if (!userExists) {
-      return handleError(res, 404, 'User not found')
+      return sendError(res, 404, 'User not found', undefined, {
+        action: 'handleDeleteUser',
+        userIdParam,
+      })
     }
 
     await db.user.delete({ where: { id: parseInt(id) } })
@@ -137,7 +184,9 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
 
     return res.status(200).json({ message: 'User deleted successfully' })
   } catch (e) {
-    return handleError(res, 500, `Error deleting user: ${e}`)
+    return sendError(res, 500, 'Internal server error', e, {
+      action: 'handleDeleteUser',
+    })
   }
 }
 
@@ -148,17 +197,26 @@ export const handleDeposit = async (req: Request, res: Response) => {
     const userIdParam = parseInt(id)
 
     if (!req.userId || req.userId !== userIdParam) {
-      return handleError(res, 401, 'Unauthorized')
+      return sendError(res, 401, 'Unauthorized', undefined, {
+        action: 'handleDeposit',
+        userIdParam,
+      })
     }
 
     const user = await findUser(parseInt(id))
     if (!user) {
-      return handleError(res, 404, 'User not found')
+      return sendError(res, 404, 'User not found', undefined, {
+        action: 'handleDeposit',
+        userIdParam,
+      })
     }
 
     const isBuyer = await checkUserRole(parseInt(id), 'buyer')
     if (!isBuyer) {
-      return handleError(res, 401, 'User is not a buyer')
+      return sendError(res, 401, 'User is not a buyer', undefined, {
+        action: 'handleDeposit',
+        userIdParam,
+      })
     }
 
     const updatedUser = await db.user.update({
@@ -171,7 +229,9 @@ export const handleDeposit = async (req: Request, res: Response) => {
       Balance: updatedUser.deposit,
     })
   } catch (e) {
-    return handleError(res, 500, `Error depositing: ${e}`)
+    return sendError(res, 500, 'Internal server error', e, {
+      action: 'handleDeposit',
+    })
   }
 }
 
@@ -181,17 +241,26 @@ export const handleReset = async (req: Request, res: Response) => {
     const userIdParam = parseInt(id)
 
     if (!req.userId || req.userId !== userIdParam) {
-      return handleError(res, 401, 'Unauthorized')
+      return sendError(res, 401, 'Unauthorized', undefined, {
+        action: 'handleReset',
+        userIdParam,
+      })
     }
 
     const user = await findUser(parseInt(id))
     if (!user) {
-      return handleError(res, 404, 'User not found')
+      return sendError(res, 404, 'User not found', undefined, {
+        action: 'handleReset',
+        userIdParam,
+      })
     }
 
     const isBuyer = await checkUserRole(parseInt(id), 'buyer')
     if (!isBuyer) {
-      return handleError(res, 401, 'User is not a buyer')
+      return sendError(res, 401, 'User is not a buyer', undefined, {
+        action: 'handleReset',
+        userIdParam,
+      })
     }
 
     const updatedUser = await db.user.update({
@@ -204,6 +273,8 @@ export const handleReset = async (req: Request, res: Response) => {
       Balance: updatedUser.deposit,
     })
   } catch (e) {
-    return handleError(res, 500, `Error resetting deposit: ${e}`)
+    return sendError(res, 500, 'Internal server error', e, {
+      action: 'handleReset',
+    })
   }
 }
