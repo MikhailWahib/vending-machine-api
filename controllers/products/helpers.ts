@@ -37,8 +37,8 @@ export const checkProductOwnership = async (
   return product?.sellerId === userId
 }
 
-export const calculateChange = (deposit: number, cost: number) => {
-  let change = deposit - cost
+export const calculateChange = (balance: number, cost: number) => {
+  let change = balance - cost
   let changeInCoins: Record<number, number> = {}
   for (const value of acceptedValues) {
     if (change >= value) {

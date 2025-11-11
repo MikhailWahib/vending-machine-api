@@ -244,7 +244,7 @@ export const handleBuy = async (req: Request, res: Response) => {
         userId,
       })
 
-    if (product.cost * amount > user.deposit!) {
+    if (product.cost * amount > user.balance!) {
       return sendError(res, 400, 'Insufficient balance', undefined, {
         action: 'handleBuy',
         productId,
@@ -274,12 +274,12 @@ export const handleBuy = async (req: Request, res: Response) => {
       }),
       db.user.update({
         where: { id: userId },
-        data: { deposit: { decrement: product.cost * amount } },
+        data: { balance: { decrement: product.cost * amount } },
       }),
     ])
 
     const changeInCoins = calculateChange(
-      user.deposit!,
+      user.balance!,
       updatedProduct.cost * amount
     )
 

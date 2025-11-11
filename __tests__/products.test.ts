@@ -37,7 +37,7 @@ describe('Product API', () => {
       .post('/api/v1/users')
       .send({ username: 'seller2', password: 'password', role: 'seller' })
 
-    // Add deposit for buyer
+    // Add balance for buyer
     const res = await request(app)
       .put(`/api/v1/users/${buyerResponse.body.user.id}/deposit`)
       .set('Cookie', buyerToken)

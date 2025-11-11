@@ -25,7 +25,7 @@ response:
 		"id": "string",
 		"username": "string",
 		"role": "string",
-		"deposit": "number"
+		"balance": "number"
 	}
 }
 ```
@@ -50,7 +50,7 @@ response:
 	"id": "string",
 	"username": "string",
 	"role": "string",
-	"deposit": "number"
+	"balance": "number"
 }
 
 // jwt token sent in cookie
@@ -67,7 +67,7 @@ response:
 	"id": "string",
 	"username": "string",
 	"role": "string",
-	"deposit": "number"
+	"balance": "number"
 }
 ```
 
@@ -107,7 +107,7 @@ response:
 		"id": "string",
 		"username": "string",
 		"role": "string",
-		"deposit": "number"
+		"balance": "number"
 	}
 }
 ```
@@ -126,7 +126,7 @@ response:
 
 - ### PUT /api/v1/users/{id}/deposit
 
-deposits money
+balances money
 
 body:
 
@@ -141,20 +141,20 @@ response:
 ```json
 {
 	"message": "string",
-	"deposit": "number"
+	"balance": "number"
 }
 ```
 
 ### PUT /api/v1/users/{id}/reset
 
-resets user deposit
+resets user balance
 
 response:
 
 ```json
 {
 	"message": "string",
-	"deposit": "number"
+	"balance": "number"
 }
 ```
 

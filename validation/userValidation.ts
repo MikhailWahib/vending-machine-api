@@ -85,7 +85,7 @@ export const depositValidation = [
 
   body('amount')
     .isInt({ min: 5 })
-    .withMessage('Deposit must be an integer and at least 5')
+    .withMessage('deposit ammount must be an integer and at least 5')
     .isIn(acceptedValues)
     .withMessage('Invalid deposit amount'),
 ]

@@ -3,7 +3,7 @@ CREATE TABLE "User" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "deposit" INTEGER DEFAULT 0,
+    "balance" INTEGER DEFAULT 0,
     "role" TEXT NOT NULL DEFAULT 'buyer'
 );
 

@@ -121,7 +121,7 @@ describe('User API', () => {
       expect(response.status).toBe(200)
     })
 
-    it("should not deposit to a user's account with an invalid deposit", async () => {
+    it("should not deposit to a user's account with an invalid value", async () => {
       const response = await request(app)
         .put(`/api/v1/users/${buyerId}/deposit`)
         .set('Cookie', token)

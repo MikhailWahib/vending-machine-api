@@ -221,12 +221,12 @@ export const handleDeposit = async (req: Request, res: Response) => {
 
     const updatedUser = await db.user.update({
       where: { id: parseInt(id) },
-      data: { deposit: { increment: amount } },
+      data: { balance: { increment: amount } },
     })
 
     return res.status(200).json({
-      message: `Deposited +${amount} successfully`,
-      Balance: updatedUser.deposit,
+      message: `deposited +${amount} successfully`,
+      Balance: updatedUser.balance,
     })
   } catch (e) {
     return sendError(res, 500, 'Internal server error', e, {
@@ -265,12 +265,12 @@ export const handleReset = async (req: Request, res: Response) => {
 
     const updatedUser = await db.user.update({
       where: { id: parseInt(id) },
-      data: { deposit: 0 },
+      data: { balance: 0 },
     })
 
     return res.status(200).json({
       message: 'User reset successfully',
-      Balance: updatedUser.deposit,
+      Balance: updatedUser.balance,
     })
   } catch (e) {
     return sendError(res, 500, 'Internal server error', e, {
