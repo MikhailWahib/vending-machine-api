@@ -268,13 +268,20 @@ export const handleBuy = async (req: Request, res: Response) => {
     }
 
     const [updatedProduct, _] = await db.$transaction([
+      // decrement product amount
       db.product.update({
         where: { id: productId },
         data: { amountAvailable: { decrement: amount } },
       }),
+      // decrement buyer balance
       db.user.update({
         where: { id: userId },
         data: { balance: { decrement: product.cost * amount } },
+      }),
+      // increment seller balance
+      db.user.update({
+        where: { id: product.sellerId },
+        data: { balance: { increment: product.cost * amount } },
       }),
     ])
 
